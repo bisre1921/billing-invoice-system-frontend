@@ -31,3 +31,16 @@ api.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+
+interface UserData {
+    "address": "string",
+    "email": "string",
+    "id": "string",
+    "name": "string",
+    "password": "string",
+    "phone": "string",
+}
+
+export const registerUser = (data: UserData) => {
+    return api.post("/auth/register/user", data);
+}
