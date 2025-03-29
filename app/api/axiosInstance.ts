@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "to be defined"; 
+const API_BASE_URL = "http://localhost:8080/api"; 
 
 const api = axios.create({
     baseURL: API_BASE_URL,
@@ -33,12 +33,11 @@ api.interceptors.response.use(
 );
 
 interface UserData {
-    "address": "string",
-    "email": "string",
-    "id": "string",
-    "name": "string",
-    "password": "string",
-    "phone": "string",
+    "address": string,
+    "email": string,
+    "name": string,
+    "password": string,
+    "phone": string,
 }
 
 export const registerUser = (data: UserData) => {
