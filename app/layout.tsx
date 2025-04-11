@@ -1,10 +1,23 @@
-"use client"
-
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Provider } from "react-redux";
-import { store } from "./store/store";
+import { Open_Sans, Merriweather } from 'next/font/google';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import Providers from "./components/Providers";  // 👈 the new wrapper
+
+const openSans = Open_Sans({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+});
+
+const merriweather = Merriweather({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+});
+
+export const metadata = {
+  title: 'Billing & Invoice System',
+  description: 'A modern billing and invoicing solution.',
+};
 
 export default function RootLayout({
   children,
@@ -12,12 +25,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <Provider store={store}>
-      <html lang="en">
-        <body>
-          {children}
-        </body>
-      </html>
-    </Provider>
+    <html lang="en">
+      <body className={openSans.className}>
+        <Providers> {/* ✅ Client-side context stuff goes here */}
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+        </Providers>
+      </body>
+    </html>
   );
 }
