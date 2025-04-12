@@ -6,6 +6,8 @@ import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { FaEnvelope, FaLock, FaPhone, FaUser } from 'react-icons/fa';
 import { RegisterUser } from '@/app/store/slices/UserAuthSlice';
+import { useAuth } from '@/app/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 
 interface FormData {
@@ -19,6 +21,13 @@ interface FormData {
 const RegisterUserPage = () => {
     const [loading, setLoading] = useState(false)
     const dispatch = useAppDispatch()
+    const router = useRouter()
+
+    const {isAuthenticated} = useAuth()
+    if (isAuthenticated) {
+      console.log("User is already authenticated")
+      router.push('/company')
+    }
 
     const {
         register,

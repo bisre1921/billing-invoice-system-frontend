@@ -40,10 +40,25 @@ interface UserData {
     "phone": string,
 }
 
+interface CompanyData {
+    "name": string;
+    "email": string;
+    "address": string;
+    "owner": string;
+    "phone": string;
+    "industry": string;
+    "estabilished_date": string;
+    "company_size": string;
+}
+
 export const registerUser = (data: UserData) => {
     return api.post("/auth/register/user", data);
 }
 
 export const loginUser = (email: string, password: string) => {
     return api.post("/auth/login", {email, password});
+}
+
+export const createCompany = (data: CompanyData) => {
+    return api.post("/company/create", data);
 }
