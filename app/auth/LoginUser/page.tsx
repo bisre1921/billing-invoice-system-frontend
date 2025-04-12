@@ -4,7 +4,7 @@ import { useAuth } from '@/app/contexts/AuthContext';
 import { useAppDispatch } from '@/app/store/hooks';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
 
@@ -20,10 +20,14 @@ const LoginUser = () => {
 
     const {login, isAuthenticated} = useAuth()
 
-    if (isAuthenticated) {
+    useEffect(() => {
+      if (isAuthenticated) {
         console.log("User is already authenticated")
         router.push('/company')
-    }
+      }
+    }, [isAuthenticated, router])
+
+   
 
     const {
             register,

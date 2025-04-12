@@ -2,7 +2,7 @@
 
 import { useAppDispatch } from '@/app/store/hooks';
 import Link from 'next/link';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { FaEnvelope, FaLock, FaPhone, FaUser } from 'react-icons/fa';
 import { RegisterUser } from '@/app/store/slices/UserAuthSlice';
@@ -24,10 +24,15 @@ const RegisterUserPage = () => {
     const router = useRouter()
 
     const {isAuthenticated} = useAuth()
-    if (isAuthenticated) {
-      console.log("User is already authenticated")
-      router.push('/company')
-    }
+
+     useEffect(() => {
+        if (isAuthenticated) {
+          console.log("User is already authenticated")
+          router.push('/company')
+        }
+      }, [isAuthenticated, router])
+
+   
 
     const {
         register,
