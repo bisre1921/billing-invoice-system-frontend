@@ -145,7 +145,7 @@ const RegisterUserPage = () => {
 
           <p className="text-center text-[#4b5563] mt-6 text-sm">
             Already have an account?{" "}
-            <Link href="/auth/login" className="text-[#ea580c] font-bold hover:underline transition">
+            <Link href="/auth/LoginUser" className="text-[#ea580c] font-bold hover:underline transition">
               Login here
             </Link>
           </p>

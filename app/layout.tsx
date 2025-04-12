@@ -3,6 +3,7 @@ import { Open_Sans, Merriweather } from 'next/font/google';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Providers from "./components/Providers";  // 👈 the new wrapper
+import { AuthProvider } from "./contexts/AuthContext";
 
 const openSans = Open_Sans({
   subsets: ['latin'],
@@ -27,11 +28,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={openSans.className}>
-        <Providers> {/* ✅ Client-side context stuff goes here */}
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-        </Providers>
+        <Providers> 
+          <AuthProvider>
+            <Navbar />
+            <main>{children}</main>
+            <Footer />
+          </AuthProvider>
+          </Providers>
+       
       </body>
     </html>
   );

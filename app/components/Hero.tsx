@@ -23,7 +23,7 @@ const Hero = () => {
           </p>
           <div className="flex flex-col sm:flex-row sm:justify-center lg:justify-start gap-6">
             <Link
-              href="/auth/RegisterUser"
+              href="/auth/LoginUser"
               className="bg-[#6366f1] text-white py-3 px-8 rounded-md text-lg font-semibold hover:bg-[#565ee0] transition duration-300 shadow-md"
             >
               Login

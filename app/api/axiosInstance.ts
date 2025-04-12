@@ -43,3 +43,7 @@ interface UserData {
 export const registerUser = (data: UserData) => {
     return api.post("/auth/register/user", data);
 }
+
+export const loginUser = (email: string, password: string) => {
+    return api.post("/auth/login", {email, password});
+}

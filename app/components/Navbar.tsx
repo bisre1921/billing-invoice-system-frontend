@@ -58,13 +58,13 @@ const NavLinks = ({ mobile = false }: { mobile?: boolean }) => {
         Contact
       </Link>
       <Link
-        href="/auth/RegisterUser"
+        href="/auth/LoginUser"
         className={`bg-[#6366f1] text-white hover:bg-[#565ee0] ${btnClass}`}
       >
         Login
       </Link>
       <Link
-        href="/register"
+        href="/auth/RegisterUser"
         className={`bg-[#f97316] text-white hover:bg-[#ea580c] ${btnClass}`}
       >
         Register
