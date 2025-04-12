@@ -2,6 +2,8 @@ import Link from 'next/link'
 import React from 'react'
 
 const Hero = () => {
+  const [loading, setLoading] = React.useState(false)
+  
   return (
     <div className="bg-gradient-to-br from-[#f1f5f9] to-white py-24">
       <div className="container mx-auto px-8 flex flex-col lg:flex-row items-center justify-between gap-12">

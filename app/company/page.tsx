@@ -1,14 +1,12 @@
 "use client"
 
 import { useAppDispatch } from '@/app/store/hooks';
-import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { FaAddressBook, FaCalendarAlt, FaEnvelope, FaIndustry, FaLock, FaPhone, FaUser } from 'react-icons/fa';
 import { useAuth } from '@/app/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { CreateCompany } from '../store/slices/CompanySlice';
-
 
 interface FormData {
     companyName: string;
@@ -84,7 +82,6 @@ const CreateCompanyPage = () => {
               {errors.companyName && <p className="text-red-500 text-sm mt-1">{errors.companyName.message}</p>}
             </div>
 
-            {/* Email */}
             <div>
               <label className="flex items-center space-x-3 bg-[#f1f5f9] border border-gray-300 rounded-xl px-5 py-3 focus-within:ring-2 focus-within:ring-[#ea580c]">
                 <FaEnvelope className="text-[#ea580c]" />
@@ -98,7 +95,6 @@ const CreateCompanyPage = () => {
               {errors.companyEmail && <p className="text-red-500 text-sm mt-1">{errors.companyEmail.message}</p>}
             </div>
 
-            {/* Address */}
             <div>
               <label className="flex items-center space-x-3 bg-[#f1f5f9] border border-gray-300 rounded-xl px-5 py-3 focus-within:ring-2 focus-within:ring-[#ea580c]">
                 <FaAddressBook className="text-[#ea580c]" />
@@ -112,7 +108,6 @@ const CreateCompanyPage = () => {
               {errors.companyAddress && <p className="text-red-500 text-sm mt-1">{errors.companyAddress.message}</p>}
             </div>
 
-             {/* industry */}
              <div>
               <label className="flex items-center space-x-3 bg-[#f1f5f9] border border-gray-300 rounded-xl px-5 py-3 focus-within:ring-2 focus-within:ring-[#ea580c]">
                 <FaIndustry className="text-[#ea580c]" />
@@ -126,7 +121,6 @@ const CreateCompanyPage = () => {
               {errors.industry && <p className="text-red-500 text-sm mt-1">{errors.industry.message}</p>}
             </div>
 
-              {/* established date */}
               <div>
               <label className="flex items-center space-x-3 bg-[#f1f5f9] border border-gray-300 rounded-xl px-5 py-3 focus-within:ring-2 focus-within:ring-[#ea580c]">
                 <FaCalendarAlt className="text-[#ea580c]" />
@@ -140,7 +134,6 @@ const CreateCompanyPage = () => {
               {errors.estabilishedDate && <p className="text-red-500 text-sm mt-1">{errors.estabilishedDate.message}</p>}
             </div>
 
-              {/* company size */}
             <div>
               <label className="flex items-center space-x-3 bg-[#f1f5f9] border border-gray-300 rounded-xl px-5 py-3 focus-within:ring-2 focus-within:ring-[#ea580c]">
                 <FaIndustry className="text-[#ea580c]" />
@@ -154,8 +147,6 @@ const CreateCompanyPage = () => {
               {errors.companySize && <p className="text-red-500 text-sm mt-1">{errors.companySize.message}</p>}
             </div>
 
-
-            {/* Phone */}
             <div>
               <label className="flex items-center space-x-3 bg-[#f1f5f9] border border-gray-300 rounded-xl px-5 py-3 focus-within:ring-2 focus-within:ring-[#ea580c]">
                 <FaPhone className="text-[#ea580c]" />
@@ -169,7 +160,6 @@ const CreateCompanyPage = () => {
               {errors.companyPhone && <p className="text-red-500 text-sm mt-1">{errors.companyPhone.message}</p>}
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}

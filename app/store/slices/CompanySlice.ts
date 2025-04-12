@@ -30,6 +30,8 @@ export const CreateCompany = createAsyncThunk(
             console.log("Company Data: ", companyData)
             const response = await createCompany(companyData);
             console.log("Company Registration Response: ", response.data)
+            localStorage.setItem("company", JSON.stringify(response.data))
+            console.log("Company Data saved to local storage")
             return response.data;
         } catch (error: any) {
             return rejectWithValue(error.response.data.message || "An error occurred");
