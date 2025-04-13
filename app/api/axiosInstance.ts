@@ -59,6 +59,10 @@ export const loginUser = (email: string, password: string) => {
     return api.post("/auth/login", {email, password});
 }
 
+export const getUser = (userId: string) => {
+    return api.get(`/user/${userId}`);
+}
+
 export const createCompany = (data: CompanyData) => {
     return api.post("/company/create", data);
 }

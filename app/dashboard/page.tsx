@@ -1,6 +1,6 @@
 'use client'; // This is a client-side component
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import NavigationSidebar from './components/NavigationSidebar';
 import PageHeader from './components/PageHeader';
 import BillingOverview from './components/BillingOverview';
@@ -9,13 +9,48 @@ import ActivityFeed from './components/ActivityFeed';
 import QuickActions from './components/QuickActions';
 import CompanyInfoCard from './components/CompanyInfoCard';
 import Link from 'next/link';
+import { getCompany } from '../api/axiosInstance';
 
 const DashboardPage = () => {
-  const companyData = {
-    name: 'Acme Corporation',
-    plan: 'Premium',
-    createdAt: '2024-03-15',
-  };
+  const [companyData, setCompanyData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [companyId, setCompanyId] = useState("");
+
+  useEffect(() => {
+    const localStorageCompany = JSON.parse(localStorage.getItem("company") || "{}");
+    console.log("Local Storage Company Data: ", localStorageCompany);
+    const companyId = localStorageCompany.company_id;
+    console.log("Company ID: ", companyId);
+    setCompanyId(companyId);
+  })
+
+  const fetchCompanyData = async () => {
+    try {
+      setLoading(true);
+      const response = await getCompany(companyId);
+      console.log("Company Data: ", response.data);
+      setCompanyData(response.data);
+    } catch (error) {
+      console.error("Error fetching company data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  
+
+  useEffect(() => {
+    if (companyId) {
+      fetchCompanyData();
+    }
+  }, [companyId]);
+
+
+  // const companyData = {
+  //   name: 'Acme Corporation',
+  //   plan: 'Premium',
+  //   createdAt: '2024-03-15',
+  // };
 
   const billingData = {
     currentMonthRevenue: 12500,
