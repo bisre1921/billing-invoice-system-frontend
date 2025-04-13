@@ -52,6 +52,7 @@ const CreateCompanyPage = () => {
           console.log("Processed Data: ", processedData)
           await dispatch(CreateCompany(processedData)).unwrap()
           setLoading(false)
+          router.push("/dashboard")
         } catch (error) {
           console.error("Error during registration: ", error)
           setLoading(false)
