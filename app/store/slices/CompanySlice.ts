@@ -1,4 +1,4 @@
-import { createCompany } from "@/app/api/axiosInstance";
+import { createCompany, getCompany } from "@/app/api/axiosInstance";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 interface CompanyState {
@@ -39,6 +39,23 @@ export const CreateCompany = createAsyncThunk(
     }
 )
 
+export const GetCompany = createAsyncThunk(
+    "/company/:id",
+    async (_, { rejectWithValue }) => {
+        try {
+            const localStorageCompany = JSON.parse(localStorage.getItem("company") || "{}");
+            console.log("Local Storage Company Data: ", localStorageCompany)
+            const companyId = localStorageCompany.company_id;
+            console.log("Company ID: ", companyId)
+            const response = await getCompany(companyId);
+            console.log("Company Data: ", response.data)
+            return response.data;
+        } catch (error: any) {
+            return rejectWithValue(error.response.data.message || "Failed to fetch company data");
+        }
+    }
+)
+
 const companySlice = createSlice({
     name: "CompanyRegistration",
     initialState,
@@ -48,6 +65,9 @@ const companySlice = createSlice({
           .addCase(CreateCompany.fulfilled, (state, action) => {
             Object.assign(state, action.payload)
           })
+          .addCase(GetCompany.fulfilled, (state, action) => {
+            Object.assign(state, action.payload);
+          });
     }
 
 })
