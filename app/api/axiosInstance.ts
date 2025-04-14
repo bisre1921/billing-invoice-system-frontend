@@ -70,3 +70,7 @@ export const createCompany = (data: CompanyData) => {
 export const getCompany = (companyId: string) => {
     return api.get(`/company/${companyId}`);
 }
+
+export const getAllCustomers = (companyId: string) => {
+    return api.get(`/customer/all?company_id=${companyId}`);
+}

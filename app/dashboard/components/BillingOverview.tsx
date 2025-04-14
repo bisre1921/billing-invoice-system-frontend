@@ -1,7 +1,7 @@
 import React from 'react';
 import { CurrencyDollarIcon, ExclamationCircleIcon, UserIcon } from '@heroicons/react/24/solid'; // Using solid icons
 
-const BillingOverview = ({ billing }: { billing: any }) => {
+const BillingOverview = ({ billing, customers }: { billing: any, customers: any }) => {
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
       <div className="px-6 py-5">
@@ -31,7 +31,9 @@ const BillingOverview = ({ billing }: { billing: any }) => {
             </div>
             <div>
               <p className="text-sm text-gray-600 font-medium">Total Customers</p>
-              <p className="text-xl font-bold text-gray-800">{billing.totalCustomers}</p>
+              <p className="text-md font-medium text-gray-800">
+                {customers?.length > 0 ? customers.length : 'No customers yet'}
+              </p>
             </div>
           </div>
         </div>

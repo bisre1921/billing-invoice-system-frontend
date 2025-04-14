@@ -9,10 +9,13 @@ import ActivityFeed from './components/ActivityFeed';
 import QuickActions from './components/QuickActions';
 import CompanyInfoCard from './components/CompanyInfoCard';
 import Link from 'next/link';
-import { getCompany } from '../api/axiosInstance';
+import { getAllCustomers, getCompany } from '../api/axiosInstance';
 
 const DashboardPage = () => {
   const [companyData, setCompanyData] = useState(null);
+  // const [billingData, setBillingData] = useState(null);
+  const [customerData, setCustomerData] = useState(null);
+
   const [loading, setLoading] = useState(true);
   const [companyId, setCompanyId] = useState("");
 
@@ -37,6 +40,18 @@ const DashboardPage = () => {
     }
   }
 
+  const fetchCustomerData = async () => {
+    try {
+      setLoading(true);
+      const response = await getAllCustomers(companyId);
+      console.log("Customer Data: ", response.data);
+      setCustomerData(response.data);
+    } catch (error) {
+      console.error("Error fetching customer data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
   
 
   useEffect(() => {
@@ -45,6 +60,12 @@ const DashboardPage = () => {
     }
   }, [companyId]);
 
+
+  useEffect(() => {
+    if (companyId) {
+      fetchCustomerData();
+    }
+  }, [companyId]);
 
   // const companyData = {
   //   name: 'Acme Corporation',
@@ -90,7 +111,7 @@ const DashboardPage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-10">
           <CompanyInfoCard company={companyData} />
-          <BillingOverview billing={billingData} />
+          <BillingOverview billing={billingData} customers={customerData} />
           <QuickActions actions={quickActions} />
         </div>
 
