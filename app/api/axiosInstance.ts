@@ -75,6 +75,10 @@ export const getAllCustomers = (companyId: string) => {
     return api.get(`/customer/all?company_id=${companyId}`);
 }
 
+export const getCustomer = (customerId: string) => {
+    return api.get(`/customer/${customerId}`);
+}
+
 export const generateInvoice = (data: any) => {
     return api.post("/invoice/generate", data);
 }
