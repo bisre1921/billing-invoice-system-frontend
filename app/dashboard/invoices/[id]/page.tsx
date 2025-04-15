@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import PageHeader from '../../components/PageHeader';
 import NavigationSidebar from '../../components/NavigationSidebar';
 import { useParams } from 'next/navigation';
-import { downloadInvoiceApi, getCustomer, getInvoice } from '@/app/api/axiosInstance';
+import { downloadInvoiceApi, getCustomer, getInvoice, sendInvoiceViaEmail } from '@/app/api/axiosInstance';
 import Link from 'next/link';
 
 interface Invoice {
@@ -105,6 +105,21 @@ const InvoiceDetailPage = () => {
       setLoading(false);
     }
   };
+
+  const sendEmail = async () => {
+    try {
+      setLoading(true);
+      const response = await sendInvoiceViaEmail(invoice?.id);
+      if (response.status === 200) {
+        alert(`Invoice sent to ${customer?.email}`);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error('Error sending invoice:', error);
+      setError('Failed to send invoice.');
+      setLoading(false);
+    }
+  }
 
   if (loading) return <div className="p-10 text-xl text-gray-600 animate-pulse">Loading invoice details...</div>;
   if (error) return <div className="p-10 text-red-600 text-lg font-semibold">{error}</div>;
@@ -207,21 +222,32 @@ const InvoiceDetailPage = () => {
               </tfoot>
             </table>
           </div>
-
-          <div className="flex flex-col md:flex-row justify-end items-center gap-4 mt-10">
-            <Link
-              href="/dashboard/invoices"
-              className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-5 py-2 rounded-lg transition"
-            >
-              Back to Invoices
-            </Link>
-            <button 
-              className="flex items-center gap-2 bg-[#565ee0] hover:bg-[#4348be] text-white font-medium px-5 py-2 rounded-lg transition"
-              onClick={downloadInvoice}
-            >
-              Download Invoice
-            </button>
+          
+          <div className="flex flex-col md:flex-row justify-between items-center mt-10">
+            <div className="flex flex-col md:flex-row justify-start items-center gap-4 mt-10">
+              <Link
+                  href="/dashboard/invoices"
+                  className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-5 py-2 rounded-lg transition"
+                >
+                  Back to Invoices
+              </Link>
+            </div>
+            <div className="flex flex-col md:flex-row justify-end items-center gap-4 mt-10">
+              <button 
+                className="flex items-center gap-2 bg-[#f97316] hover:bg-[#4348be] text-white font-medium px-5 py-2 rounded-lg transition"
+                onClick={sendEmail}
+              >
+                 Send Invoice to {customer?.name}
+              </button>
+              <button 
+                className="flex items-center gap-2 bg-[#565ee0] hover:bg-[#4348be] text-white font-medium px-5 py-2 rounded-lg transition"
+                onClick={downloadInvoice}
+              >
+                Download Invoice
+              </button>
+            </div>
           </div>
+         
         </div>
       </div>
     </div>

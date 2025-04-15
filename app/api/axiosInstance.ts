@@ -92,3 +92,7 @@ export const downloadInvoiceApi = (invoiceId: string) => {
       responseType: "blob",
     });
 };
+
+export const sendInvoiceViaEmail = (invoiceId: any) => {
+    return api.post(`/invoice/send/${invoiceId}`);
+}
