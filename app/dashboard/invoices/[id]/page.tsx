@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import PageHeader from '../../components/PageHeader';
 import NavigationSidebar from '../../components/NavigationSidebar';
 import { useParams } from 'next/navigation';
-import { getCustomer, getInvoice } from '@/app/api/axiosInstance';
+import { downloadInvoiceApi, getCustomer, getInvoice } from '@/app/api/axiosInstance';
 import Link from 'next/link';
 
 interface Invoice {
@@ -74,6 +74,34 @@ const InvoiceDetailPage = () => {
     } catch (error) {
       console.error('Error fetching customer:', error);
       setError('Failed to load customer details.');
+      setLoading(false);
+    }
+  };
+
+  const downloadInvoice = async () => {
+    if (!invoice?.id) {
+      console.error('Invoice ID is missing.');
+      alert('Could not download invoice. Invoice ID is missing.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await downloadInvoiceApi(invoice.id); // Use the dedicated downloadInvoiceApi function
+
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `invoice_${invoice.reference_number.replace(/\s+/g, '-')}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error downloading invoice:', error);
+      setError('Failed to download invoice.');
       setLoading(false);
     }
   };
@@ -162,7 +190,7 @@ const InvoiceDetailPage = () => {
               </thead>
               <tbody className="bg-white">
                 {invoice.items.map((item) => (
-                  <tr key={item.id} className="border-t">
+                  <tr key={item.item_name} className="border-t">
                     <td className="px-6 py-4">{item.item_name}</td>
                     <td className="px-6 py-4 text-right">{item.quantity}</td>
                     <td className="px-6 py-4 text-right">${item.unit_price.toFixed(2)}</td>
@@ -187,7 +215,10 @@ const InvoiceDetailPage = () => {
             >
               Back to Invoices
             </Link>
-            <button className="flex items-center gap-2 bg-[#565ee0] hover:bg-[#4348be] text-white font-medium px-5 py-2 rounded-lg transition">
+            <button 
+              className="flex items-center gap-2 bg-[#565ee0] hover:bg-[#4348be] text-white font-medium px-5 py-2 rounded-lg transition"
+              onClick={downloadInvoice}
+            >
               Download Invoice
             </button>
           </div>
