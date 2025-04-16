@@ -79,7 +79,7 @@ const Navbar = () => {
     <nav className="bg-white shadow-md sticky top-0 z-50 border-b border-[#e2e8f0]">
       <div className="container mx-auto px-6 py-4 flex items-center justify-between">
         <Link href="/" className="text-2xl font-bold text-[#565ee0]">
-          Billing System
+          Yegna Invoice
         </Link>
 
         <button

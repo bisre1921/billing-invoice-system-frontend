@@ -8,7 +8,7 @@ const NavigationSidebar = () => {
 
   const navLinks = [
     { href: '/dashboard', label: 'Dashboard', icon: <HomeIcon className="w-5 h-5 mr-3 text-gray-400" /> },
-    { href: '/dashboard/invoices', label: 'Invoices', icon: <DocumentDuplicateIcon className="w-5 h-5 mr-3 text-gray-400" /> },
+    { href: '/dashboard/invoices/all', label: 'Invoices', icon: <DocumentDuplicateIcon className="w-5 h-5 mr-3 text-gray-400" /> },
     { href: '/dashboard/customers', label: 'Customers', icon: <UserGroupIcon className="w-5 h-5 mr-3 text-gray-400" /> },
     { href: '/dashboard/settings', label: 'Settings', icon: <CogIcon className="w-5 h-5 mr-3 text-gray-400" /> },
   ];

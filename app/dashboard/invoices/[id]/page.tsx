@@ -226,7 +226,7 @@ const InvoiceDetailPage = () => {
           <div className="flex flex-col md:flex-row justify-between items-center mt-10">
             <div className="flex flex-col md:flex-row justify-start items-center gap-4 mt-10">
               <Link
-                  href="/dashboard/invoices"
+                  href="/dashboard/invoices/all"
                   className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-5 py-2 rounded-lg transition"
                 >
                   Back to Invoices
