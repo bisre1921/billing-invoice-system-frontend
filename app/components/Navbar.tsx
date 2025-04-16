@@ -152,8 +152,9 @@ const Navbar = () => {
 
           {isAuthenticated && user?.email ? (
             <div className="flex items-center space-x-3">
-              <HiUserCircle className="text-2xl" />
-              <span className={`${baseClasses}`}>{userName}</span>
+              <span className={`bg-[#565ee0] text-white flex gap-2 ${btnClass} `}>
+               <HiUserCircle className="text-2xl" /> {userName}
+              </span>
               <button
                 onClick={handleLogout}
                 className={`bg-red-500 text-white hover:bg-red-600 ${btnClass}`}
