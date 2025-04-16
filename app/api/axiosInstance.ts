@@ -26,7 +26,7 @@ api.interceptors.response.use(
         if (error.response.status === 401) {
             console.error("Unauthorized access - redirecting to login");
             localStorage.removeItem("token");
-            window.location.href = "/login"; 
+            window.location.href = "/auth/LoginUser"; 
         }
         return Promise.reject(error);
     }
@@ -59,7 +59,7 @@ export const loginUser = (email: string, password: string) => {
     return api.post("/auth/login", {email, password});
 }
 
-export const getUser = (userId: string) => {
+export const getUser = (userId: any) => {
     return api.get(`/user/${userId}`);
 }
 
