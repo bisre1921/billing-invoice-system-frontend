@@ -9,11 +9,22 @@ import ActivityFeed from './components/ActivityFeed';
 import QuickActions from './components/QuickActions';
 import CompanyInfoCard from './components/CompanyInfoCard';
 import Link from 'next/link';
-import { getAllCustomers, getCompany } from '../api/axiosInstance';
+import { getAllCustomers, getCompany, getInvoicesByCompany } from '../api/axiosInstance';
+
+interface Invoice {
+  id: string;
+  reference_number: string;
+  customer_id: string;
+  date: string;
+  due_date: string;
+  status: string;
+  amount: number;
+} 
 
 const DashboardPage = () => {
   const [companyData, setCompanyData] = useState(null);
   // const [billingData, setBillingData] = useState(null);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [customerData, setCustomerData] = useState(null);
 
   const [loading, setLoading] = useState(true);
@@ -64,14 +75,9 @@ const DashboardPage = () => {
   useEffect(() => {
     if (companyId) {
       fetchCustomerData();
+      fetchCompanyInvoices(companyId);
     }
   }, [companyId]);
-
-  // const companyData = {
-  //   name: 'Acme Corporation',
-  //   plan: 'Premium',
-  //   createdAt: '2024-03-15',
-  // };
 
   const billingData = {
     currentMonthRevenue: 12500,
@@ -79,14 +85,28 @@ const DashboardPage = () => {
     totalCustomers: 120,
   };
 
-  const invoices = [
-    { id: 'INV-2025-001', customer: 'Beta Industries', issueDate: '2025-04-05', amount: 550, status: 'Paid' },
-    { id: 'INV-2025-002', customer: 'Gamma Solutions', issueDate: '2025-04-08', amount: 1200, status: 'Pending' },
-    { id: 'INV-2025-003', customer: 'Delta Corp', issueDate: '2025-04-10', amount: 875, status: 'Paid' },
-    { id: 'INV-2025-004', customer: 'Epsilon Ltd', issueDate: '2025-04-12', amount: 320, status: 'Overdue' },
-    { id: 'INV-2025-005', customer: 'Zeta Systems', issueDate: '2025-04-15', amount: 980, status: 'Draft' },
-    { id: 'INV-2025-006', customer: 'Theta Group', issueDate: '2025-04-18', amount: 1500, status: 'Paid' },
-  ];
+  // const invoices = [
+  //   { id: 'INV-2025-001', customer: 'Beta Industries', issueDate: '2025-04-05', amount: 550, status: 'Paid' },
+  //   { id: 'INV-2025-002', customer: 'Gamma Solutions', issueDate: '2025-04-08', amount: 1200, status: 'Pending' },
+  //   { id: 'INV-2025-003', customer: 'Delta Corp', issueDate: '2025-04-10', amount: 875, status: 'Paid' },
+  //   { id: 'INV-2025-004', customer: 'Epsilon Ltd', issueDate: '2025-04-12', amount: 320, status: 'Overdue' },
+  //   { id: 'INV-2025-005', customer: 'Zeta Systems', issueDate: '2025-04-15', amount: 980, status: 'Draft' },
+  //   { id: 'INV-2025-006', customer: 'Theta Group', issueDate: '2025-04-18', amount: 1500, status: 'Paid' },
+  // ];
+
+  const fetchCompanyInvoices = async (companyId: string) => {
+      try {
+        setLoading(true);
+        const response = await getInvoicesByCompany(companyId);
+        console.log("invoice response: ", response);
+        console.log("invoice response data: ", response.data);
+        setInvoices(response.data);
+        setLoading(false);
+      } catch (error: any) {
+        console.error('Error fetching company invoices:', error);
+        setLoading(false);
+      }
+  };
 
   const activityItems = [
     { id: 1, type: 'invoice_sent', message: 'Invoice INV-2025-001 sent to Beta Industries.', timestamp: '5 minutes ago' },
