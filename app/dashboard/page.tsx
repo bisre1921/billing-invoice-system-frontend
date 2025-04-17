@@ -85,15 +85,6 @@ const DashboardPage = () => {
     totalCustomers: 120,
   };
 
-  // const invoices = [
-  //   { id: 'INV-2025-001', customer: 'Beta Industries', issueDate: '2025-04-05', amount: 550, status: 'Paid' },
-  //   { id: 'INV-2025-002', customer: 'Gamma Solutions', issueDate: '2025-04-08', amount: 1200, status: 'Pending' },
-  //   { id: 'INV-2025-003', customer: 'Delta Corp', issueDate: '2025-04-10', amount: 875, status: 'Paid' },
-  //   { id: 'INV-2025-004', customer: 'Epsilon Ltd', issueDate: '2025-04-12', amount: 320, status: 'Overdue' },
-  //   { id: 'INV-2025-005', customer: 'Zeta Systems', issueDate: '2025-04-15', amount: 980, status: 'Draft' },
-  //   { id: 'INV-2025-006', customer: 'Theta Group', issueDate: '2025-04-18', amount: 1500, status: 'Paid' },
-  // ];
-
   const fetchCompanyInvoices = async (companyId: string) => {
       try {
         setLoading(true);
@@ -140,17 +131,17 @@ const DashboardPage = () => {
             <div className="px-6 py-5 border-b border-gray-200 bg-gray-50">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-gray-800 tracking-tight">Recent Invoices</h2>
-                <Link href="/dashboard/invoices" className="text-primary-600 hover:text-primary-700 font-medium transition duration-150 text-sm">View All</Link>
+                <Link href="/dashboard/invoices/all" className="text-primary-600 hover:text-primary-700 font-medium transition duration-150 text-sm">View All</Link>
               </div>
             </div>
-            <InvoiceList invoices={invoices.slice(0, 5)} /> {/* Show a limited number */}
+            <InvoiceList invoices={invoices.slice(0, 5)} /> 
           </div>
 
           <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
             <div className="px-6 py-5 border-b border-gray-200 bg-gray-50">
               <h2 className="text-lg font-semibold text-gray-800 tracking-tight">Activity Feed</h2>
             </div>
-            <ActivityFeed items={activityItems.slice(0, 5)} /> {/* Show a limited number */}
+            <ActivityFeed items={activityItems.slice(0, 5)} /> 
           </div>
         </div>
       </div>

@@ -79,6 +79,14 @@ export const getCustomer = (customerId: string) => {
     return api.get(`/customer/${customerId}`);
 }
 
+export const deleteCustomer = (customerId: string) => {
+    return api.delete(`/customer/delete/${customerId}`);
+}
+
+export const updateCustomer = (customerId: string, data: any) => {
+    return api.put(`/customer/update/${customerId}`, data);
+}
+
 export const generateInvoice = (data: any) => {
     return api.post("/invoice/generate", data);
 }
@@ -99,4 +107,8 @@ export const downloadInvoiceApi = (invoiceId: string) => {
 
 export const sendInvoiceViaEmail = (invoiceId: any) => {
     return api.post(`/invoice/send/${invoiceId}`);
+}
+
+export const addCustomer = (data: any) => {
+    return api.post("/customer/register", data);
 }
