@@ -79,6 +79,10 @@ export const getCustomer = (customerId: string) => {
     return api.get(`/customer/${customerId}`);
 }
 
+export const addCustomer = (data: any) => {
+    return api.post("/customer/register", data);
+}
+
 export const deleteCustomer = (customerId: string) => {
     return api.delete(`/customer/delete/${customerId}`);
 }
@@ -109,6 +113,23 @@ export const sendInvoiceViaEmail = (invoiceId: any) => {
     return api.post(`/invoice/send/${invoiceId}`);
 }
 
-export const addCustomer = (data: any) => {
-    return api.post("/customer/register", data);
+
+export const addEmployee = (data: any) => {
+    return api.post("/employee/add", data);
+}
+
+export const getAllEmployees = (companyId: string) => {
+    return api.get(`/employee/all?company_id=${companyId}`);
+}   
+
+export const getEmployee = (employeeId: string) => {
+    return api.get(`/employee/${employeeId}`);
+}
+
+export const deleteEmployee = (employeeId: string) => {
+    return api.delete(`/employee/delete/${employeeId}`);
+}
+
+export const updateEmployee = (employeeId: string, data: any) => {
+    return api.put(`/employee/update/${employeeId}`, data);
 }

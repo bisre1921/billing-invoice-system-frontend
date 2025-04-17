@@ -232,7 +232,7 @@ const CreateInvoicePage = () => {
 
           <div className="flex justify-end space-x-3 mt-10">
             <Link
-              href="/dashboard/invoices"
+              href="/dashboard"
               className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 rounded-lg transition"
             >
               Cancel

@@ -30,7 +30,7 @@ export default function RootLayout({
       <body className={openSans.className}>
         <Providers> 
           <AuthProvider>
-            <Navbar />
+            {/* <Navbar /> */}
             <main>{children}</main>
             <Footer />
           </AuthProvider>
