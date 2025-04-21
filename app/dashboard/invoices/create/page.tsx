@@ -86,6 +86,7 @@ const CreateInvoicePage = () => {
       const payload = {
         reference_number: data.reference_number,
         customer_id: data.customer_id,
+        company_id: companyId,
         date: `${data.date}T00:00:00Z`, 
         due_date: `${data.due_date}T00:00:00Z`, 
         payment_date: data.payment_date ? `${data.payment_date}T00:00:00Z` : "",
