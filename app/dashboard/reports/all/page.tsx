@@ -12,6 +12,7 @@ interface Report {
   type: string;
   status: string;
   created_date: string;
+  created_by: string;
 }
 
 const AllReportsPage = () => {
@@ -76,6 +77,9 @@ const AllReportsPage = () => {
                     Status
                   </th>
                   <th className="px-5 py-3 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Created By
+                  </th>
+                  <th className="px-5 py-3 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Created Date
                   </th>
                   <th className="px-5 py-3 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
@@ -98,6 +102,9 @@ const AllReportsPage = () => {
                       }`}>
                         {report.status}
                       </span>
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <p className="text-gray-900 whitespace-no-wrap">{report.created_by}</p>
                     </td>
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                       <p className="text-gray-900 whitespace-no-wrap">{new Date(report.created_date).toLocaleDateString()}</p>

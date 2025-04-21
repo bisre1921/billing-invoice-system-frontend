@@ -11,6 +11,7 @@ interface ReportFormData {
   company_id: string;
   title: string;
   description: string;
+  content: string;
   type: string;
   created_by: string;
 }
@@ -59,7 +60,8 @@ const GenerateReportPage = () => {
         try {
             const response = await getUser(userInfo.user_id);
             console.log("Current User Data: ", response.data);
-            setCreaterName(response.data.name);
+            setCreaterName(response.data.user.name);
+            console.log("Creater Name: ", response.data.user.name);
         } catch (error: any) {
             console.error("Error fetching user data:", error);
             setUserError('Failed to fetch user information.');
@@ -84,6 +86,7 @@ const GenerateReportPage = () => {
             company_id: companyId,
             title: formData.get('title') as string,
             description: formData.get('description') as string,
+            content: formData.get('content') as string,
             type: formData.get('type') as string,
             created_by: createrName,
         };
@@ -93,6 +96,7 @@ const GenerateReportPage = () => {
             console.log('Report generated:', response.data);
             setGeneratedReport(response.data);
             alert('Report generated successfully!');
+            router.push('/dashboard/reports/all');
         } catch (error: any) {
             console.error('Failed to generate report:', error);
             setError('Failed to generate report. Please check the console for details.');
@@ -152,6 +156,18 @@ const GenerateReportPage = () => {
               rows={4}
               className="input-style resize-none"
               placeholder="Enter report description"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="content" className="text-sm font-semibold text-gray-600 mb-1 block">Full Content</label>
+            <textarea
+              id="content"
+              name="content"
+              rows={6}
+              className="input-style resize-none"
+              placeholder="Enter full report content"
               required
             />
           </div>
