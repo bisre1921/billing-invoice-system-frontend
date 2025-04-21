@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import NavigationSidebar from '../../components/NavigationSidebar';
 import PageHeader from '../../components/PageHeader';
 import { useRouter, useParams } from 'next/navigation';
-import { getReport, getUser } from '@/app/api/axiosInstance';
+import { downloadReportApi, getReport, getUser } from '@/app/api/axiosInstance';
 import Link from 'next/link';
 
 interface Report {
@@ -30,6 +30,8 @@ const ReportDetailPage = () => {
     const [report, setReport] = useState<Report | null>(null);
     const [reportLoading, setReportLoading] = useState(true);
     const [reportError, setReportError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
     const { id } = useParams();
     const [createrName, setCreaterName] = useState<string>('');
 
@@ -54,6 +56,34 @@ const ReportDetailPage = () => {
             setReportLoading(false);
         }
     };
+
+    const downloadReport = async () => {
+       if (!report?.id) {
+         console.error('Report ID is missing.');
+         alert('Could not download report. Report ID is missing.');
+         return;
+       }
+   
+       try {
+         setLoading(true);
+         const response = await downloadReportApi(report.id); 
+   
+         const blob = new Blob([response.data], { type: 'application/pdf' });
+         const url = window.URL.createObjectURL(blob);
+         const a = document.createElement('a');
+         a.href = url;
+         a.download = `report_${report.title.replace(/\s+/g, '-')}.pdf`;
+         document.body.appendChild(a);
+         a.click();
+         window.URL.revokeObjectURL(url);
+         document.body.removeChild(a);
+         setLoading(false);
+       } catch (error) {
+         console.error('Error downloading report:', error);
+         setError('Failed to download report.');
+         setLoading(false);
+       }
+     };
 
    
     if (reportLoading) return <div className="p-6 text-lg text-gray-700">Loading details...</div>;
@@ -118,15 +148,13 @@ const ReportDetailPage = () => {
                             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16l-4-4m0 0l4-4m-4 4h18m-4-4v-2m2-2H5m16 2v6a2 2 0 01-2 2H7a2 2 0 01-2-2V11"></path></svg>
                             Back to All Reports
                         </Link>
-                        <Link
-                            href={`/dashboard/reports/download/${report.id}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-150 ease-in-out"
+                        <button 
+                            className="inline-flex items-center bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-150 ease-in-out" 
+                            onClick={downloadReport}
                         >
                             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                             Download Report
-                        </Link>
+                        </button>
                     </div>
                 </div>
             </div>
