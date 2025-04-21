@@ -145,3 +145,9 @@ export const getReport = (reportId: string) => {
 export const getAllReports = (companyId: string) => {
     return api.get(`/report/all?company_id=${companyId}`);
 }
+
+export const downloadReportApi = (reportId: string) => {
+    return api.get(`/report/download/${reportId}`, {
+      responseType: "blob",
+    });
+};
