@@ -137,3 +137,7 @@ export const updateEmployee = (employeeId: string, data: any) => {
 export const generateReport = (data: any) => {
     return api.post("/report/generate", data);
 }
+
+export const getReport = (reportId: string) => {
+    return api.get(`/report/${reportId}`);
+}
