@@ -133,3 +133,7 @@ export const deleteEmployee = (employeeId: string) => {
 export const updateEmployee = (employeeId: string, data: any) => {
     return api.put(`/employee/update/${employeeId}`, data);
 }
+
+export const generateReport = (data: any) => {
+    return api.post("/report/generate", data);
+}
