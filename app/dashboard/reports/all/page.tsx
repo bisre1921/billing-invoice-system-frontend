@@ -106,9 +106,6 @@ const AllReportsPage = () => {
                       <Link href={`/dashboard/reports/${report.id}`} className="text-indigo-600 hover:text-indigo-800 mr-2">
                         View Details
                       </Link>
-                      <Link href={`/dashboard/reports/download/${report.id}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
-                        Download
-                      </Link>
                     </td>
                   </tr>
                 ))}
