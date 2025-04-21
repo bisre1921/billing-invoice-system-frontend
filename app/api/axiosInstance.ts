@@ -142,8 +142,8 @@ export const getReport = (reportId: string) => {
     return api.get(`/report/${reportId}`);
 }
 
-export const getAllReports = (companyId: string) => {
-    return api.get(`/report/all?company_id=${companyId}`);
+export const getAllReportsByCompany = (companyId: string) => {
+    return api.get(`/report/companies/${companyId}`);
 }
 
 export const downloadReportApi = (reportId: string) => {
