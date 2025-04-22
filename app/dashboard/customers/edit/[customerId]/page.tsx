@@ -28,7 +28,7 @@ const EditCustomerPage = () => {
   useEffect(() => {
     console.log("customerId:", customerId); 
     const localStorageCompany = JSON.parse(localStorage.getItem('company') || '{}');
-    setCompanyId(localStorageCompany.company_id);
+    setCompanyId(localStorageCompany.id);
   }, []);
 
   useEffect(() => {

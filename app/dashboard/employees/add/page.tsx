@@ -30,7 +30,7 @@ const AddEmployeePage = () => {
 
   useEffect(() => {
     const localStorageCompany = JSON.parse(localStorage.getItem('company') || '{}');
-    setCompanyId(localStorageCompany.company_id);
+    setCompanyId(localStorageCompany.id);
   }, []);
 
   const onSubmit: SubmitHandler<AddEmployeeFormData> = async (data) => {

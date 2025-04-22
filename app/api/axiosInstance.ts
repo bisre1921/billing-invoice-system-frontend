@@ -63,6 +63,10 @@ export const getUser = (userId: any) => {
     return api.get(`/user/${userId}`);
 }
 
+export const checkComapnyForUser = (userId: string) => {
+    return api.get(`/company/user/${userId}`);
+}
+
 export const createCompany = (data: CompanyData) => {
     return api.post("/company/create", data);
 }

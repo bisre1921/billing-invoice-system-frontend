@@ -33,7 +33,7 @@ const DashboardPage = () => {
   useEffect(() => {
     const localStorageCompany = JSON.parse(localStorage.getItem("company") || "{}");
     console.log("Local Storage Company Data: ", localStorageCompany);
-    const companyId = localStorageCompany.company_id;
+    const companyId = localStorageCompany.id;
     console.log("Company ID: ", companyId);
     setCompanyId(companyId);
   })
