@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { HiMenu, HiX, HiUserCircle } from 'react-icons/hi';
 import { useRouter } from 'next/navigation';
 import { getUser } from '../api/axiosInstance';
+import { useAuth } from '../contexts/AuthContext';
 
 interface User {
   email?: string;
@@ -46,8 +47,11 @@ const Navbar = () => {
     setLoading(false);
   };
 
+  const { logout } = useAuth();
   const handleLogout = () => {
-    console.log("Logging out...");
+    logout();
+    checkAuthentication();
+    router.push("/")
   };
 
   const fetchUserName = async () => {
