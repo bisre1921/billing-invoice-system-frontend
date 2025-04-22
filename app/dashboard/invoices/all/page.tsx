@@ -69,7 +69,7 @@ const CompanyInvoicesPage = () => {
   if (loading) return <div className="p-6 text-lg">Loading invoices...</div>;
   if (error) return <div className="p-6 text-red-500 text-lg">Error: {error}</div>;
   if (!companyId) return <div className="p-6 text-gray-500 text-lg">Company ID not provided.</div>;
-  if (invoices.length === 0) return <div className="p-6 text-gray-500 text-lg">No invoices found for this company.</div>;
+  if (invoices?.length == 0) return <div className="p-6 text-gray-500 text-lg">No invoices found for this company.</div>;
 
   const getStatusColorClass = (status: string) => {
     switch (status) {
@@ -109,7 +109,7 @@ const CompanyInvoicesPage = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {invoices.map(invoice => (
+                {invoices?.map(invoice => (
                   <tr key={invoice.id} className="hover:bg-gray-50 transition duration-150">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{invoice.reference_number}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{format(new Date(invoice.date), 'MMM d, yyyy')}</td>
@@ -134,7 +134,7 @@ const CompanyInvoicesPage = () => {
                   <td colSpan={5} className="px-6 py-3 text-right text-sm font-semibold text-gray-700">
                     Total Invoices:
                   </td>
-                  <td className="px-6 py-3 text-right text-sm font-semibold text-indigo-700">{invoices.length}</td>
+                  <td className="px-6 py-3 text-right text-sm font-semibold text-indigo-700">{invoices?.length}</td>
                 </tr>
               </tfoot>
             </table>

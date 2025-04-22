@@ -128,7 +128,7 @@ const EmployeesPage = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {employees.map((employee) => (
+                {employees?.map((employee) => (
                   <tr key={employee.id} className="hover:bg-gray-50 transition duration-150">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{employee.name}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{employee.email}</td>
@@ -152,7 +152,7 @@ const EmployeesPage = () => {
                     </td>
                   </tr>
                 ))}
-                {employees.length === 0 && !loading && !error && (
+                {employees?.length === 0 && !loading && !error && (
                   <tr>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 italic" colSpan={5}>
                       No employees found for this company.

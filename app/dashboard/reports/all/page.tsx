@@ -55,7 +55,7 @@ const AllReportsPage = () => {
       <div className="flex-1 p-6 md:p-10">
         <PageHeader title="All Reports" />
 
-        {reports.length === 0 ? (
+        {reports?.length === 0 ? (
           <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
             <p className="text-gray-700">No reports have been generated yet.</p>
             <Link href="/dashboard/reports" className="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition">
@@ -88,7 +88,7 @@ const AllReportsPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {reports.map((report) => (
+                {reports?.map((report) => (
                   <tr key={report.id}>
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                       <p className="text-gray-900 whitespace-no-wrap">{report.title}</p>

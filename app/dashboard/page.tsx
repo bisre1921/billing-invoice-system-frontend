@@ -135,7 +135,7 @@ const DashboardPage = () => {
                 <Link href="/dashboard/invoices/all" className="text-primary-600 hover:text-primary-700 font-medium transition duration-150 text-sm">View All</Link>
               </div>
             </div>
-            <InvoiceList invoices={invoices.slice(0, 5)} /> 
+            <InvoiceList invoices={invoices?.slice(0, 5)} /> 
           </div>
 
           <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
