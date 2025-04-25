@@ -1,4 +1,4 @@
-'use client'; // This is a client-side component
+'use client'; 
 
 import React, { useEffect, useState } from 'react';
 import NavigationSidebar from './components/NavigationSidebar';
@@ -23,7 +23,6 @@ interface Invoice {
 
 const DashboardPage = () => {
   const [companyData, setCompanyData] = useState(null);
-  // const [billingData, setBillingData] = useState(null);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [customerData, setCustomerData] = useState(null);
 
@@ -123,7 +122,7 @@ const DashboardPage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-10">
           <CompanyInfoCard company={companyData} />
-          <BillingOverview billing={billingData} customers={customerData} />
+          <BillingOverview invoices={invoices} customers={customerData} />
           <QuickActions actions={quickActions} />
         </div>
 
