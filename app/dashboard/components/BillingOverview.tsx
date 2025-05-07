@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { CurrencyDollarIcon, ExclamationCircleIcon, UserIcon } from '@heroicons/react/24/solid'; // Using solid icons
+import { CurrencyDollarIcon, ExclamationCircleIcon, UserIcon } from '@heroicons/react/24/solid';
+import { parseISO, isValid, getMonth, getYear } from 'date-fns'; 
 
 interface Invoice {
   id: string;
   reference_number: string;
   customer_id: string;
-  date: string;
+  date: string; 
   due_date: string;
   status: string;
   amount: number;
@@ -21,17 +22,36 @@ const BillingOverview = ({ invoices, customers }: { invoices: Invoice[], custome
       const currentMonth = now.getMonth();
       const currentYear = now.getFullYear();
 
+      console.log("Current Month (0-based):", currentMonth); 
+      console.log("Current Year:", currentYear); 
+
       const monthlyRevenue = invoices.reduce((sum, invoice) => {
-        const invoiceDate = new Date(invoice.date);
-        if (invoiceDate.getMonth() === currentMonth && invoiceDate.getFullYear() === currentYear) {
-          sum += invoice.amount;
+        const parsedDate = parseISO(invoice.date); 
+        let invoiceDate: Date | null = null;
+
+        if (isValid(parsedDate)) {
+          invoiceDate = parsedDate;
+        } else {
+          console.warn("Warning: Could not parse date using ISO 8601.", invoice.date);
+          return sum; 
         }
+
+        console.log("Invoice Date String:", invoice.date); 
+        console.log("Parsed Month (0-based):", getMonth(invoiceDate)); 
+        console.log("Parsed Year:", getYear(invoiceDate));  
+        console.log("invoice amounts", invoice.amount);
+        if (getMonth(invoiceDate) === currentMonth && getYear(invoiceDate) === currentYear) {
+          sum += invoice.amount;
+          console.log("this month invoice amount: ", invoice.amount);
+        }
+        console.log("total sum: ", sum);
         return sum;
       }, 0);
       setCurrentMonthRevenue(monthlyRevenue);
 
       const outstandingCount = invoices.filter(invoice => invoice.amount >= 1000).length;
       setOutstandingInvoicesCount(outstandingCount);
+      console.log("this month revenue: ", monthlyRevenue);
     } else {
       setCurrentMonthRevenue(0);
       setOutstandingInvoicesCount(0);
