@@ -6,3 +6,16 @@
     }
   }
   
+html,
+body {
+  height: 100%; /* Make html and body take up the full viewport height */
+  margin: 0; /* Remove default body margin */
+  display: flex; /* Enable flexbox for the body */
+  flex-direction: column; /* Stack body content vertically */
+}
+
+main {
+  flex-grow: 1; /* Allow main to grow and take up remaining space */
+}
+
+/* You might already have other styles in globals.css, don't remove them */

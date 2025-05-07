@@ -124,6 +124,9 @@ const DashboardPage = () => {
           <CompanyInfoCard company={companyData} />
           <BillingOverview invoices={invoices} customers={customerData} />
           <QuickActions actions={quickActions} />
+          <h1>
+            Pridictive Analytics using AI
+          </h1>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

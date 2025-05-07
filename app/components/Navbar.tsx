@@ -10,6 +10,7 @@ import { useAuth } from '../contexts/AuthContext';
 interface User {
   email?: string;
   user_id?: string;
+  name?: string; // Add name to the User interface
 }
 
 const Navbar = () => {
@@ -63,7 +64,7 @@ const Navbar = () => {
       console.error("Error fetching user name:", error);
     }
   };
-  
+
 
   useEffect(() => {
     checkAuthentication();
@@ -109,10 +110,9 @@ const Navbar = () => {
 
           {isAuthenticated && user?.email ? (
             <div className="flex items-center space-x-3">
-              
-              <span className={`bg-[#565ee0] text-white flex gap-2 ${btnClass} `}>
-               <HiUserCircle className="text-2xl" /> {userName}
-              </span>
+              <Link href="/profile" className={`bg-[#565ee0] text-white flex gap-2 ${btnClass} cursor-pointer`}>
+                <HiUserCircle className="text-2xl" /> {userName}
+              </Link>
               <button
                 onClick={handleLogout}
                 className={`bg-red-500 text-white hover:bg-red-600 ${btnClass}`}
@@ -155,10 +155,10 @@ const Navbar = () => {
           </Link>
 
           {isAuthenticated && user?.email ? (
-            <div className="flex items-center space-x-3">
-              <span className={`bg-[#565ee0] text-white flex gap-2 ${btnClass} `}>
-               <HiUserCircle className="text-2xl" /> {userName}
-              </span>
+            <div className="flex flex-col items-start space-y-3">
+              <Link href="/profile" className={`bg-[#565ee0] text-white flex gap-2 ${btnClass} cursor-pointer`}>
+                <HiUserCircle className="text-2xl" /> {userName}
+              </Link>
               <button
                 onClick={handleLogout}
                 className={`bg-red-500 text-white hover:bg-red-600 ${btnClass}`}

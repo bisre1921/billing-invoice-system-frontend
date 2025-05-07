@@ -40,6 +40,13 @@ interface UserData {
     "phone": string,
 }
 
+interface UpdateUserProfileData { 
+    "name"?: string;
+    "email"?: string;
+    "phone"?: string;
+    "address"?: string;
+}
+
 interface CompanyData {
     "name": string;
     "email": string;
@@ -61,6 +68,10 @@ export const loginUser = (email: string, password: string) => {
 
 export const getUser = (userId: any) => {
     return api.get(`/user/${userId}`);
+}
+
+export const updateUser = (userId: string, data: UpdateUserProfileData) => {
+    return api.put(`/user/update/${userId}`, data);
 }
 
 export const checkComapnyForUser = (userId: string) => {
