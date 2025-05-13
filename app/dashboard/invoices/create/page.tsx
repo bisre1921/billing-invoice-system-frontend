@@ -5,7 +5,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import PageHeader from '../../components/PageHeader';
 import NavigationSidebar from '../../components/NavigationSidebar';
 import Link from 'next/link';
-import { generateInvoice, getAllCustomers } from '@/app/api/axiosInstance';
+import { generateInvoice, getAllCustomers, getAllItems } from '@/app/api/axiosInstance';
 import { useRouter } from 'next/navigation';
 
 interface InvoiceItem {
@@ -32,8 +32,14 @@ interface Customer {
   name: string;
 }
 
+interface Item {
+  id: string;
+  name: string;
+}
+
 const CreateInvoicePage = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [items, setItems] = useState<Item[]>([]);
   const [companyId, setCompanyId] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -65,6 +71,7 @@ const CreateInvoicePage = () => {
   useEffect(() => {
     if (companyId) {
       fetchCustomers();
+      fetchItems();
     }
   }, [companyId]);
 
@@ -80,6 +87,21 @@ const CreateInvoicePage = () => {
       setLoading(false);
     }
   };
+
+  const fetchItems = async () => {
+    try {
+      setLoading(true);
+      const response = await getAllItems(companyId);
+      console.log("company id: ", companyId);
+      console.log('Items:', response.data);
+      setItems(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching items:', error);
+      setError('Failed to load items.');
+      setLoading(false);
+    }
+  }
 
   const onSubmit = async (data: InvoiceFormData) => {
     try {
@@ -99,7 +121,8 @@ const CreateInvoicePage = () => {
           discount: Number(item.discount || 0),
         })),
       };
-  
+      console.log("items: ", data.items);
+      console.log('Payload:', payload);
       const response = await generateInvoice(payload);
       console.log('Invoice created:', response.data);
     //   alert('Invoice created successfully!');
@@ -118,7 +141,7 @@ const CreateInvoicePage = () => {
   };
   
 
-  if (loading) return <div className="p-6 text-lg">Loading customers...</div>;
+  if (loading) return <div className="p-6 text-lg">Loading customers and items...</div>;
   if (error) return <div className="p-6 text-red-500 text-lg">Error: {error}</div>;
 
   return (
@@ -189,11 +212,24 @@ const CreateInvoicePage = () => {
 
             {fields.map((field, index) => (
               <div key={field.id} className="grid md:grid-cols-5 gap-4 mb-4 bg-gray-50 p-4 rounded-lg">
-                <input
+
+                <div>
+                  <select {...register(`items.${index}.item_name`, { required: true })} className="input-style">
+                    <option value="">Select Item Name</option>
+                    {items?.map(item => (
+                      <option key={item.id} value={item.name}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* <input
                   {...register(`items.${index}.item_name`, { required: true })}
                   placeholder="Item Name"
                   className="input-style md:col-span-2"
-                />
+                /> */}
+
                 <input
                   type="number"
                   {...register(`items.${index}.quantity`, { required: true, min: 1 })}

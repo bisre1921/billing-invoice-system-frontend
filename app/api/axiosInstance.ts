@@ -118,6 +118,14 @@ export const getInvoicesByCompany = (companyId: string) => {
     return api.get(`/invoice/companies/${companyId}`);
 }
 
+export const addItem = (data: any) => {
+    return api.post("/item/add", data);
+}
+
+export const getAllItems = (companyId: string) => {
+    return api.get(`/item/company/${companyId}`);
+}
+
 export const downloadInvoiceApi = (invoiceId: string) => {
     return api.get(`/invoice/download/${invoiceId}`, {
       responseType: "blob",
