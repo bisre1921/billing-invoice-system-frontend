@@ -174,3 +174,11 @@ export const downloadReportApi = (reportId: string) => {
       responseType: "blob",
     });
 };
+
+export const markInvoiceAsPaid = (invoiceId: string, paymentDate?: string) => {
+    const payload: { payment_date?: string } = {};
+    if (paymentDate) {
+      payload.payment_date = `${paymentDate}T00:00:00Z`;
+    }
+    return api.put(`/invoice/mark-as-paid/${invoiceId}`, payload);
+  };

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import PageHeader from '../../components/PageHeader';
 import NavigationSidebar from '../../components/NavigationSidebar';
 import { useParams } from 'next/navigation';
-import { downloadInvoiceApi, getCustomer, getInvoice, sendInvoiceViaEmail } from '@/app/api/axiosInstance';
+import { downloadInvoiceApi, getCustomer, getInvoice, markInvoiceAsPaid, sendInvoiceViaEmail } from '@/app/api/axiosInstance';
 import Link from 'next/link';
 
 interface Invoice {
@@ -121,6 +121,30 @@ const InvoiceDetailPage = () => {
     }
   }
 
+  const handleMarkAsPaid = async () => {
+    if (!invoice?.id) {
+      console.error('Invoice ID is missing.');
+      alert('Could not mark as paid. Invoice ID is missing.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await markInvoiceAsPaid(invoice.id);
+      if (response.status === 200) {
+        alert('Invoice marked as paid successfully!');
+        fetchInvoice(invoice.id); // Refresh invoice data
+      } else {
+        alert('Failed to mark invoice as paid.');
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error('Error marking as paid:', error);
+      setError('Failed to mark invoice as paid.');
+      setLoading(false);
+    }
+  };
+
   if (loading) return <div className="p-10 text-xl text-gray-600 animate-pulse">Loading invoice details...</div>;
   if (error) return <div className="p-10 text-red-600 text-lg font-semibold">{error}</div>;
   if (!invoice) return <div className="p-10 text-gray-500 text-lg">Invoice not found.</div>;
@@ -130,8 +154,6 @@ const InvoiceDetailPage = () => {
       ? 'bg-green-100 text-green-700'
       : invoice.status === 'Unpaid'
       ? 'bg-red-100 text-red-700'
-      : invoice.status === 'Pending'
-      ? 'bg-yellow-100 text-yellow-700'
       : 'bg-gray-200 text-gray-800';
 
   return (
@@ -231,6 +253,18 @@ const InvoiceDetailPage = () => {
                 >
                   Back to Invoices
               </Link>
+              {invoice.status === 'Unpaid' && (
+                <button
+                  className="bg-green-500 hover:bg-green-600 text-white font-medium px-5 py-2 rounded-lg transition"
+                  onClick={handleMarkAsPaid}
+                  disabled={loading}
+                >
+                  {loading ? 'Marking as Paid...' : 'Mark as Paid'}
+                </button>
+              )}
+              {invoice.status === 'Paid' && (
+                <span className="text-green-600 font-semibold">Paid</span>
+              )}
             </div>
             <div className="flex flex-col md:flex-row justify-end items-center gap-4 mt-10">
               <button 

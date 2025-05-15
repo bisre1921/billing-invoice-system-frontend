@@ -110,7 +110,6 @@ const CreateInvoicePage = () => {
         customer_id: data.customer_id,
         company_id: companyId,
         payment_date: data.payment_date ? `${data.payment_date}T00:00:00Z` : "",
-        status: data.status,
         terms: data.terms,
         items: data.items.map(item => ({
           item_name: item.item_name, // Ensure this sends the item ID
@@ -187,7 +186,7 @@ const CreateInvoicePage = () => {
               <input type="date" {...register('payment_date')} className="input-style" />
             </div>
 
-            <div>
+            {/* <div>
               <label className="text-sm font-semibold text-gray-600 mb-1 block">Status</label>
               <select {...register('status', { required: true })} className="input-style">
                 <option value="">Select Status</option>
@@ -195,7 +194,7 @@ const CreateInvoicePage = () => {
                 <option value="Unpaid">Unpaid</option>
                 <option value="Pending">Pending</option>
               </select>
-            </div>
+            </div> */}
 
             <div className="md:col-span-2">
               <label className="text-sm font-semibold text-gray-600 mb-1 block">Terms</label>
