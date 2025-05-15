@@ -109,26 +109,20 @@ const CreateInvoicePage = () => {
         reference_number: data.reference_number,
         customer_id: data.customer_id,
         company_id: companyId,
-        date: `${data.date}T00:00:00Z`, 
-        due_date: `${data.due_date}T00:00:00Z`, 
         payment_date: data.payment_date ? `${data.payment_date}T00:00:00Z` : "",
         status: data.status,
         terms: data.terms,
         items: data.items.map(item => ({
-          item_name: item.item_name,
+          item_name: item.item_name, // Ensure this sends the item ID
           quantity: Number(item.quantity),
           unit_price: Number(item.unit_price),
           discount: Number(item.discount || 0),
         })),
       };
-      console.log("items: ", data.items);
-      console.log('Payload:', payload);
+      console.log("Payload:", payload);
       const response = await generateInvoice(payload);
       console.log('Invoice created:', response.data);
-    //   alert('Invoice created successfully!');
-      console.log('Invoice created successfully for invoice id:', response.data.invoice.id);
       const newInvoiceId = response.data.invoice.id;
-      console.log('New Invoice ID:', newInvoiceId);
       if (newInvoiceId) {
         router.push(`/dashboard/invoices/${newInvoiceId}`);
       } else {
@@ -176,18 +170,20 @@ const CreateInvoicePage = () => {
               </select>
             </div>
 
-            <div>
+            {/* REMOVE Issue Date */}
+            {/* <div>
               <label className="text-sm font-semibold text-gray-600 mb-1 block">Issue Date</label>
               <input type="date" {...register('date', { required: true })} className="input-style" />
-            </div>
+            </div> */}
 
-            <div>
+            {/* REMOVE Due Date */}
+            {/* <div>
               <label className="text-sm font-semibold text-gray-600 mb-1 block">Due Date</label>
               <input type="date" {...register('due_date', { required: true })} className="input-style" />
-            </div>
+            </div> */}
 
             <div>
-              <label className="text-sm font-semibold text-gray-600 mb-1 block">Payment Date</label>
+              <label className="text-sm font-semibold text-gray-600 mb-1 block">Payment Date (Optional)</label>
               <input type="date" {...register('payment_date')} className="input-style" />
             </div>
 
