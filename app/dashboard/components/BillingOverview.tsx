@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { CurrencyDollarIcon, ExclamationCircleIcon, UserIcon } from '@heroicons/react/24/solid';
-import { parseISO, isValid, getMonth, getYear } from 'date-fns'; 
+import { parseISO, isValid, getMonth, getYear } from 'date-fns';
 
 interface Invoice {
   id: string;
   reference_number: string;
   customer_id: string;
-  date: string; 
+  date: string;
   due_date: string;
   status: string;
   amount: number;
 }
 
 const BillingOverview = ({ invoices, customers }: { invoices: Invoice[], customers: any }) => {
-  const [currentMonthRevenue, setCurrentMonthRevenue] = useState(0);
+  const [paidRevenue, setPaidRevenue] = useState(0);
+  const [unpaidRevenue, setUnpaidRevenue] = useState(0);
   const [outstandingInvoicesCount, setOutstandingInvoicesCount] = useState(0);
 
   useEffect(() => {
@@ -22,55 +23,57 @@ const BillingOverview = ({ invoices, customers }: { invoices: Invoice[], custome
       const currentMonth = now.getMonth();
       const currentYear = now.getFullYear();
 
-      console.log("Current Month (0-based):", currentMonth); 
-      console.log("Current Year:", currentYear); 
+      let currentMonthPaidRevenue = 0;
+      let currentMonthUnpaidRevenue = 0;
 
-      const monthlyRevenue = invoices.reduce((sum, invoice) => {
-        const parsedDate = parseISO(invoice.date); 
-        let invoiceDate: Date | null = null;
-
-        if (isValid(parsedDate)) {
-          invoiceDate = parsedDate;
-        } else {
-          console.warn("Warning: Could not parse date using ISO 8601.", invoice.date);
-          return sum; 
+      invoices.forEach((invoice) => {
+        const parsedDate = parseISO(invoice.date);
+        if (isValid(parsedDate) && getMonth(parsedDate) === currentMonth && getYear(parsedDate) === currentYear) {
+          if (invoice.status === 'Paid') {
+            currentMonthPaidRevenue += invoice.amount;
+          } else if (invoice.status === 'Unpaid') {
+            currentMonthUnpaidRevenue += invoice.amount;
+          }
         }
+      });
 
-        console.log("Invoice Date String:", invoice.date); 
-        console.log("Parsed Month (0-based):", getMonth(invoiceDate)); 
-        console.log("Parsed Year:", getYear(invoiceDate));  
-        console.log("invoice amounts", invoice.amount);
-        if (getMonth(invoiceDate) === currentMonth && getYear(invoiceDate) === currentYear) {
-          sum += invoice.amount;
-          console.log("this month invoice amount: ", invoice.amount);
-        }
-        console.log("total sum: ", sum);
-        return sum;
-      }, 0);
-      setCurrentMonthRevenue(monthlyRevenue);
+      setPaidRevenue(currentMonthPaidRevenue);
+      setUnpaidRevenue(currentMonthUnpaidRevenue);
 
-      const outstandingCount = invoices.filter(invoice => invoice.amount >= 1000).length;
+      const outstandingCount = invoices.filter(invoice => invoice.amount >= 50000).length;
       setOutstandingInvoicesCount(outstandingCount);
-      console.log("this month revenue: ", monthlyRevenue);
     } else {
-      setCurrentMonthRevenue(0);
+      setPaidRevenue(0);
+      setUnpaidRevenue(0);
       setOutstandingInvoicesCount(0);
     }
   }, [invoices]);
-
 
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
       <div className="px-6 py-5">
         <h3 className="text-lg font-semibold text-gray-800 tracking-tight mb-5">Billing Insights</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          <div className="flex items-center space-x-4 p-4 rounded-md bg-blue-50 hover:bg-blue-100 transition duration-200">
-            <div className="bg-blue-500 text-white p-3 rounded-md shadow-sm flex-shrink-0">
-              <CurrencyDollarIcon className="w-6 h-6" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
+          <div className="p-4 rounded-md bg-green-50 hover:bg-green-100 transition duration-200">
+            <div className="flex items-center space-x-4">
+              <div className="bg-green-500 text-white p-3 rounded-md shadow-sm flex-shrink-0">
+                <CurrencyDollarIcon className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 font-medium">This Month Revenue (Paid)</p>
+                <p className="text-xl font-bold text-green-700">${paidRevenue.toLocaleString()}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-gray-600 font-medium">This Month Revenue</p>
-              <p className="text-xl font-bold text-gray-800">${currentMonthRevenue.toLocaleString()}</p>
+          </div>
+          <div className="p-4 rounded-md bg-orange-50 hover:bg-orange-100 transition duration-200">
+            <div className="flex items-center space-x-4">
+              <div className="bg-orange-500 text-white p-3 rounded-md shadow-sm flex-shrink-0">
+                <CurrencyDollarIcon className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 font-medium">This Month Revenue (Unpaid)</p>
+                <p className="text-xl font-bold text-orange-700">${unpaidRevenue.toLocaleString()}</p>
+              </div>
             </div>
           </div>
           <div className="flex items-center space-x-4 p-4 rounded-md bg-yellow-50 hover:bg-yellow-100 transition duration-200">
@@ -79,16 +82,16 @@ const BillingOverview = ({ invoices, customers }: { invoices: Invoice[], custome
             </div>
             <div>
               <p className="text-sm text-gray-600 font-medium">Outstanding Invoices</p>
-              <p className="text-xl font-bold text-gray-800">{outstandingInvoicesCount}</p>
+              <p className="text-xl font-bold text-yellow-700">{outstandingInvoicesCount}</p>
             </div>
           </div>
-          <div className="flex items-center space-x-4 p-4 rounded-md bg-green-50 hover:bg-green-100 transition duration-200">
-            <div className="bg-green-500 text-white p-3 rounded-md shadow-sm flex-shrink-0">
+          <div className="flex items-center space-x-4 p-4 rounded-md bg-blue-50 hover:bg-blue-100 transition duration-200">
+            <div className="bg-blue-500 text-white p-3 rounded-md shadow-sm flex-shrink-0">
               <UserIcon className="w-6 h-6" />
             </div>
             <div>
               <p className="text-sm text-gray-600 font-medium">Total Customers</p>
-              <p className="text-md font-medium text-gray-800">
+              <p className="text-md font-medium text-blue-700">
                 {customers?.length > 0 ? customers.length : 'No customers yet'}
               </p>
             </div>
