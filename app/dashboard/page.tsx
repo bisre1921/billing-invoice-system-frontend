@@ -125,9 +125,17 @@ const DashboardPage = () => {
           <CompanyInfoCard company={companyData} />
           <BillingOverview invoices={invoices} customers={customerData} />
           <QuickActions actions={quickActions} />
-          <h1>
-            Pridictive Analytics using AI
-          </h1>
+          <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200 flex flex-col justify-center items-center">
+                        <h2 className="text-lg font-semibold text-gray-800 tracking-tight mb-4">Predictive Analytics using AI</h2>
+                        <div className="space-y-3">
+                            <Link href="/dashboard/predictions/customer" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-md transition duration-150 text-center">
+                                Customer Prediction
+                            </Link>
+                            <Link href="/dashboard/predictions/items" className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-md transition duration-150 text-center">
+                                Items Prediction
+                            </Link>
+                        </div>
+                    </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

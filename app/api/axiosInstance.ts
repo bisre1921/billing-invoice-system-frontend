@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 const API_BASE_URL = "http://localhost:8080/api"; 
 
@@ -57,6 +57,27 @@ interface CompanyData {
     "estabilished_date": string;
     "company_size": string;
 }
+
+interface CustomerForecastResponse {
+    itemId: string;
+    itemName: string;
+    predicted_average_Quantity: number;
+}
+
+interface ItemForecastResponse {
+    itemId: string;
+    itemName: string;
+    predictedAverageQuantity: number;
+    rmse: number;
+}
+
+export const getCustomerItemForecast = (customerId: string): Promise<AxiosResponse<CustomerForecastResponse[]>> => {
+    return axios.get(`http://127.0.0.1:8000/customer/forecast/${customerId}`);
+};
+
+export const getBulkItemForecast = (): Promise<AxiosResponse<ItemForecastResponse[]>> => {
+    return axios.get(`http://127.0.0.1:8000/items/Items-forecast`);
+};
 
 export const registerUser = (data: UserData) => {
     return api.post("/auth/register/user", data);
