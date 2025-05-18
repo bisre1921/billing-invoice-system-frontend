@@ -11,7 +11,6 @@ interface ReportFormData {
   company_id: string;
   title: string;
   description: string;
-  content: string;
   type: string;
   created_by: string;
 }
@@ -23,91 +22,87 @@ interface userInfo {
 }
 
 const GenerateReportPage = () => {
-    const [companyId, setCompanyId] = useState('');
-    const [userInfo, setUserInfo] = useState<userInfo>({ user_id: '', email: '', exp: 0 });
-    const [loading, setLoading] = useState(false);
-    const [userLoading, setUserLoading] = useState(true);
-    const [error, setError] = useState('');
-    const [userError, setUserError] = useState('');
-    const router = useRouter();
-    const [reportOptions, setReportOptions] = useState([
-        { value: 'Financial', label: 'Financial Report' },
-        { value: 'Inventory', label: 'Inventory Report' },
-        { value: 'Customer Analysis', label: 'Customer Analysis Report' },
-    ]);
-    const [generatedReport, setGeneratedReport] = useState<any>(null);
-    const [createrName, setCreaterName] = useState<string>('');
+  const [companyId, setCompanyId] = useState('');
+  const [userInfo, setUserInfo] = useState<userInfo>({ user_id: '', email: '', exp: 0 });
+  const [loading, setLoading] = useState(false);
+  const [userLoading, setUserLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [userError, setUserError] = useState('');
+  const router = useRouter();
+  const [reportOptions, setReportOptions] = useState([
+    { value: 'Financial', label: 'Financial Report' },
+    { value: 'Inventory', label: 'Inventory Report' },
+    { value: 'Customer Analysis', label: 'Customer Analysis Report' },
+  ]);
+  const [generatedReport, setGeneratedReport] = useState<any>(null);
+  const [createrName, setCreaterName] = useState<string>('');
 
-    useEffect(() => {
-        const storedUserInfo = localStorage.getItem('userInfo');
-        if (storedUserInfo) {
-            const parsedUserInfo = JSON.parse(storedUserInfo);
-            setUserInfo(parsedUserInfo);
-        }
-    }, []);
+  useEffect(() => {
+    const storedUserInfo = localStorage.getItem('userInfo');
+    if (storedUserInfo) {
+      const parsedUserInfo = JSON.parse(storedUserInfo);
+      setUserInfo(parsedUserInfo);
+    }
+  }, []);
 
-    useEffect(() => {
-        if (userInfo.user_id) {
-            fetchCurrentUser();
-        } else {
-            setUserLoading(false); 
-        }
-    }, [userInfo.user_id]);
+  useEffect(() => {
+    if (userInfo.user_id) {
+      fetchCurrentUser();
+    } else {
+      setUserLoading(false);
+    }
+  }, [userInfo.user_id]);
 
-    const fetchCurrentUser = async () => {
-        setUserLoading(true);
-        setUserError('');
-        try {
-            const response = await getUser(userInfo.user_id);
-            console.log("Current User Data: ", response.data);
-            setCreaterName(response.data.user.name);
-            console.log("Creater Name: ", response.data.user.name);
-        } catch (error: any) {
-            console.error("Error fetching user data:", error);
-            setUserError('Failed to fetch user information.');
-        } finally {
-            setUserLoading(false);
-        }
+  const fetchCurrentUser = async () => {
+    setUserLoading(true);
+    setUserError('');
+    try {
+      const response = await getUser(userInfo.user_id);
+      setCreaterName(response.data.user.name);
+    } catch (error: any) {
+      console.error("Error fetching user data:", error);
+      setUserError('Failed to fetch user information.');
+    } finally {
+      setUserLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const localStorageCompany = JSON.parse(localStorage.getItem('company') || '{}');
+    setCompanyId(localStorageCompany.id);
+  }, []);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+    setError('');
+    setGeneratedReport(null);
+
+    const formData = new FormData(event.currentTarget);
+    const reportData: ReportFormData = {
+      company_id: companyId,
+      title: formData.get('title') as string,
+      description: formData.get('description') as string,
+      type: formData.get('type') as string,
+      created_by: createrName,
     };
 
-    useEffect(() => {
-        const localStorageCompany = JSON.parse(localStorage.getItem('company') || '{}');
-        setCompanyId(localStorageCompany.id);
-    }, []);
+    try {
+      const response = await generateReport(reportData);
+      console.log('Report generated:', response.data);
+      setGeneratedReport(response.data);
+      alert('Report generated successfully!');
+      router.push('/dashboard/reports/all');
+    } catch (error: any) {
+      console.error('Failed to generate report:', error);
+      setError('Failed to generate report. Please check the console for details.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        setLoading(true);
-        setError('');
-        setGeneratedReport(null);
-
-        const formData = new FormData(event.currentTarget);
-        const reportData: ReportFormData = {
-            company_id: companyId,
-            title: formData.get('title') as string,
-            description: formData.get('description') as string,
-            content: formData.get('content') as string,
-            type: formData.get('type') as string,
-            created_by: createrName,
-        };
-
-        try {
-            const response = await generateReport(reportData);
-            console.log('Report generated:', response.data);
-            setGeneratedReport(response.data);
-            alert('Report generated successfully!');
-            router.push('/dashboard/reports/all');
-        } catch (error: any) {
-            console.error('Failed to generate report:', error);
-            setError('Failed to generate report. Please check the console for details.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    if (userLoading) return <div className="p-6 text-lg">Loading user information...</div>;
-    if (userError) return <div className="p-6 text-red-500 text-lg">{userError}</div>;
-
+  if (userLoading) return <div className="p-6 text-lg">Loading user information...</div>;
+  if (userError) return <div className="p-6 text-red-500 text-lg">{userError}</div>;
 
   return (
     <div className="bg-gray-100 min-h-screen flex">
@@ -160,39 +155,27 @@ const GenerateReportPage = () => {
             />
           </div>
 
-          <div>
-            <label htmlFor="content" className="text-sm font-semibold text-gray-600 mb-1 block">Full Content</label>
-            <textarea
-              id="content"
-              name="content"
-              rows={6}
-              className="input-style resize-none"
-              placeholder="Enter full report content"
-              required
-            />
-          </div>
-
           <div className="flex justify-between items-center">
             <Link
               href="/dashboard/reports/all"
               className="bg-[#f97316] hover:bg-[#ea580c] text-white font-semibold py-2 px-6 rounded-lg transition"
             >
-                View All Reports
+              View All Reports
             </Link>
             <div className="flex justify-end space-x-3 mt-8">
-                <Link
+              <Link
                 href="/dashboard"
                 className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 rounded-lg transition"
-                >
+              >
                 Cancel
-                </Link>
-                <button
+              </Link>
+              <button
                 type="submit"
                 className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg shadow-lg transition"
                 disabled={loading}
-                >
+              >
                 {loading ? 'Generating...' : 'Generate Report'}
-                </button>
+              </button>
             </div>
           </div>
         </form>

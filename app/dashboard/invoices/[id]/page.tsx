@@ -6,6 +6,7 @@ import NavigationSidebar from '../../components/NavigationSidebar';
 import { useParams } from 'next/navigation';
 import { downloadInvoiceApi, getCustomer, getInvoice, markInvoiceAsPaid, sendInvoiceViaEmail } from '@/app/api/axiosInstance';
 import Link from 'next/link';
+import { saveAs } from 'file-saver';
 
 interface Invoice {
   amount: number;
@@ -78,30 +79,23 @@ const InvoiceDetailPage = () => {
     }
   };
 
-  const downloadInvoice = async () => {
+  const downloadDocument = async () => {
     if (!invoice?.id) {
       console.error('Invoice ID is missing.');
-      alert('Could not download invoice. Invoice ID is missing.');
+      alert('Could not download document. Invoice ID is missing.');
       return;
     }
 
     try {
       setLoading(true);
-      const response = await downloadInvoiceApi(invoice.id); // Use the dedicated downloadInvoiceApi function
+      const response = await downloadInvoiceApi(invoice.id);
 
       const blob = new Blob([response.data], { type: 'application/pdf' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `invoice_${invoice.reference_number.replace(/\s+/g, '-')}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      saveAs(blob, invoice.status === 'Paid' ? `receipt_${invoice.reference_number.replace(/\s+/g, '-')}.pdf` : `invoice_${invoice.reference_number.replace(/\s+/g, '-')}.pdf`);
       setLoading(false);
     } catch (error) {
-      console.error('Error downloading invoice:', error);
-      setError('Failed to download invoice.');
+      console.error('Error downloading document:', error);
+      setError('Failed to download document.');
       setLoading(false);
     }
   };
@@ -111,12 +105,12 @@ const InvoiceDetailPage = () => {
       setLoading(true);
       const response = await sendInvoiceViaEmail(invoice?.id);
       if (response.status === 200) {
-        alert(`Invoice sent to ${customer?.email}`);
+        alert(`${invoice?.status === 'Paid' ? 'Receipt' : 'Invoice'} sent to ${customer?.email}`);
       }
       setLoading(false);
     } catch (error) {
-      console.error('Error sending invoice:', error);
-      setError('Failed to send invoice.');
+      console.error('Error sending document:', error);
+      setError(`Failed to send ${invoice?.status === 'Paid' ? 'receipt' : 'invoice'}.`);
       setLoading(false);
     }
   }
@@ -160,13 +154,13 @@ const InvoiceDetailPage = () => {
     <div className="bg-gradient-to-br from-gray-50 to-white min-h-screen flex">
       <NavigationSidebar />
       <div className="flex-1 p-6 md:p-10">
-        <PageHeader title={`Invoice: ${invoice.reference_number}`} />
+        <PageHeader title={`${invoice.status === 'Paid' ? 'Receipt' : 'Invoice'}: ${invoice.reference_number}`} />
 
         <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-200 transition hover:shadow-2xl duration-300">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
             <div>
               <h2 className="text-3xl font-bold text-gray-800">
-                Invoice <span className="text-[#565ee0]">#{invoice.reference_number}</span>
+                {invoice.status === 'Paid' ? 'Receipt' : 'Invoice'} <span className="text-[#565ee0]">#{invoice.reference_number}</span>
               </h2>
               <p className="text-sm text-gray-500 mt-1">
                 Issued on {new Date(invoice.date).toLocaleDateString()}
@@ -197,19 +191,26 @@ const InvoiceDetailPage = () => {
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-5 tracking-wide">Invoice Details</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-5 tracking-wide">{invoice.status === 'Paid' ? 'Payment Details' : 'Invoice Details'}</h3>
               <div className="space-y-2 text-sm text-gray-700 leading-relaxed">
                 <div>
-                  <span className="font-medium text-gray-600">Due Date:</span> {new Date(invoice.due_date).toLocaleDateString()}
+                  <span className="font-medium text-gray-600">Date:</span> {new Date(invoice.date).toLocaleDateString()}
                 </div>
+                {invoice.status !== 'Paid' && (
+                  <div>
+                    <span className="font-medium text-gray-600">Due Date:</span> {new Date(invoice.due_date).toLocaleDateString()}
+                  </div>
+                )}
                 {invoice.payment_date && (
                   <div>
                     <span className="font-medium text-gray-600">Payment Date:</span> {new Date(invoice.payment_date).toLocaleDateString()}
                   </div>
                 )}
-                <div>
-                  <span className="font-medium text-gray-600">Terms:</span> {invoice.terms || 'N/A'}
-                </div>
+                {invoice.status !== 'Paid' && (
+                  <div>
+                    <span className="font-medium text-gray-600">Terms:</span> {invoice.terms || 'N/A'}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -244,14 +245,14 @@ const InvoiceDetailPage = () => {
               </tfoot>
             </table>
           </div>
-          
+
           <div className="flex flex-col md:flex-row justify-between items-center mt-10">
             <div className="flex flex-col md:flex-row justify-start items-center gap-4 mt-10">
               <Link
-                  href="/dashboard/invoices/all"
-                  className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-5 py-2 rounded-lg transition"
-                >
-                  Back to Invoices
+                href="/dashboard/invoices/all"
+                className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-5 py-2 rounded-lg transition"
+              >
+                Back to Invoices
               </Link>
               {invoice.status === 'Unpaid' && (
                 <button
@@ -263,25 +264,29 @@ const InvoiceDetailPage = () => {
                 </button>
               )}
               {invoice.status === 'Paid' && (
-                <span className="text-green-600 font-semibold">Paid</span>
+                <span className="text-green-600 font-semibold">Paid on {invoice.payment_date ? new Date(invoice.payment_date).toLocaleDateString() : 'N/A'}</span>
               )}
             </div>
             <div className="flex flex-col md:flex-row justify-end items-center gap-4 mt-10">
-              <button 
-                className="flex items-center gap-2 bg-[#f97316] hover:bg-[#4348be] text-white font-medium px-5 py-2 rounded-lg transition"
+              <button
+                className={`flex items-center gap-2 text-white font-medium px-5 py-2 rounded-lg transition ${
+                  invoice.status === 'Paid' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-[#f97316] hover:bg-[#e0580b]'
+                }`}
                 onClick={sendEmail}
+                disabled={loading}
               >
-                 Send Invoice to {customer?.name}
+                {loading ? 'Sending...' : `Send ${invoice.status === 'Paid' ? 'Receipt' : 'Invoice'} to ${customer?.name}`}
               </button>
-              <button 
+              <button
                 className="flex items-center gap-2 bg-[#565ee0] hover:bg-[#4348be] text-white font-medium px-5 py-2 rounded-lg transition"
-                onClick={downloadInvoice}
+                onClick={downloadDocument}
+                disabled={loading}
               >
-                Download Invoice
+                {loading ? 'Downloading...' : `Download ${invoice.status === 'Paid' ? 'Receipt' : 'Invoice'}`}
               </button>
             </div>
           </div>
-         
+
         </div>
       </div>
     </div>
