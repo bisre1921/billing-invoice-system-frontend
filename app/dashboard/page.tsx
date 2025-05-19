@@ -10,6 +10,7 @@ import QuickActions from './components/QuickActions';
 import CompanyInfoCard from './components/CompanyInfoCard';
 import Link from 'next/link';
 import { getAllCustomers, getCompany, getInvoicesByCompany } from '../api/axiosInstance';
+import { ChartBarIcon, SparklesIcon, UserIcon } from '@heroicons/react/24/outline';
 
 interface Invoice {
   id: string;
@@ -125,17 +126,23 @@ const DashboardPage = () => {
           <CompanyInfoCard company={companyData} />
           <BillingOverview invoices={invoices} customers={customerData} />
           <QuickActions actions={quickActions} />
-          <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200 flex flex-col justify-center items-center">
-                        <h2 className="text-lg font-semibold text-gray-800 tracking-tight mb-4">Predictive Analytics using AI</h2>
-                        <div className="space-y-3">
-                            <Link href="/dashboard/predictions/customer" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-md transition duration-150 text-center">
-                                Customer Prediction
-                            </Link>
-                            <Link href="/dashboard/predictions/items" className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-md transition duration-150 text-center">
-                                Items Prediction
-                            </Link>
-                        </div>
-                    </div>
+          <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200 flex flex-col justify-center items-center">
+                <div className="mb-4">
+                    <SparklesIcon className="h-8 w-8 text-indigo-500" />
+                </div>
+                <h2 className="text-lg font-semibold text-gray-800 tracking-tight mb-3">AI Predictive Insights</h2>
+                <p className="text-gray-500 text-center mb-4 text-sm">Explore potential future trends for your business.</p>
+                <div className="space-y-2 w-full">
+                    <Link href="/dashboard/predictions/customer" className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-4 rounded-md transition duration-150 flex items-center justify-center">
+                        <UserIcon className="h-5 w-5 mr-2" />
+                        Customer Prediction
+                    </Link>
+                    <Link href="/dashboard/predictions/items" className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-md transition duration-150 flex items-center justify-center">
+                        <ChartBarIcon className="h-5 w-5 mr-2" />
+                        Items Prediction
+                    </Link>
+                </div>
+            </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
