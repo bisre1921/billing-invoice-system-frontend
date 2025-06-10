@@ -92,8 +92,14 @@ const LoginUser = () => {
                                 <FaEnvelope className="text-[#ea580c]" />
                                 <input
                                     type="email"
-                                    placeholder="Email"
-                                    {...register("email", { required: "Email is required" })}
+                                    placeholder="Email *"
+                                    {...register("email", { 
+                                        required: "Email is required",
+                                        pattern: {
+                                            value: /^\S+@\S+$/i,
+                                            message: "Please enter a valid email address"
+                                        }
+                                    })}
                                     className="bg-transparent flex-1 outline-none text-[#1e293b] placeholder-gray-500"
                                 />
                             </label>
@@ -105,8 +111,14 @@ const LoginUser = () => {
                                 <FaLock className="text-[#ea580c]" />
                                 <input
                                     type="password"
-                                    placeholder="Password"
-                                    {...register("password", { required: "Password is required" })}
+                                    placeholder="Password *"
+                                    {...register("password", { 
+                                        required: "Password is required",
+                                        minLength: {
+                                            value: 6,
+                                            message: "Password must be at least 6 characters long"
+                                        }
+                                    })}
                                     className="bg-transparent flex-1 outline-none text-[#1e293b] placeholder-gray-500"
                                 />
                             </label>

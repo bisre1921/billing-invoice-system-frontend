@@ -47,12 +47,13 @@ const Navbar = () => {
 
     setLoading(false);
   };
-
   const { logout } = useAuth();
   const handleLogout = () => {
-    logout();
-    checkAuthentication();
-    router.push("/")
+    if (window.confirm('Are you sure you want to logout?')) {
+      logout();
+      checkAuthentication();
+      router.push("/")
+    }
   };
 
   const fetchUserName = async () => {

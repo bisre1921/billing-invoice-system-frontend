@@ -2,9 +2,20 @@ import Link from 'next/link';
 import { HomeIcon, DocumentDuplicateIcon, UserGroupIcon, CogIcon, ArrowLeftOnRectangleIcon, DocumentCheckIcon } from '@heroicons/react/24/outline'; // Example icons
 import { usePathname } from 'next/navigation';
 import React from 'react';
+import { useAuth } from '@/app/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 const NavigationSidebar = () => {
   const pathname = usePathname();
+  const { logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    if (window.confirm('Are you sure you want to logout?')) {
+      logout();
+      router.push('/');
+    }
+  };
 
   const navLinks = [
     { href: '/dashboard', label: 'Dashboard', icon: <HomeIcon className="w-5 h-5 mr-3 text-gray-400" /> },
@@ -38,12 +49,14 @@ const NavigationSidebar = () => {
             </li>
           ))}
         </ul>
-      </nav>
-      <div className="mt-8 border-t border-gray-800 pt-4">
-        <Link href="/logout" className="flex items-center py-2 px-3 rounded-md hover:bg-gray-800 transition duration-200 text-red-400 hover:text-red-300 font-medium text-sm">
+      </nav>      <div className="mt-8 border-t border-gray-800 pt-4">
+        <button 
+          onClick={handleLogout}
+          className="flex items-center py-2 px-3 rounded-md hover:bg-gray-800 transition duration-200 text-red-400 hover:text-red-300 font-medium text-sm w-full text-left"
+        >
           <ArrowLeftOnRectangleIcon className="w-5 h-5 mr-3" />
           Logout
-        </Link>
+        </button>
       </div>
     </aside>
   );
