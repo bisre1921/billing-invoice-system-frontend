@@ -7,76 +7,34 @@ import { useRouter } from 'next/navigation';
 import { getUser } from '../api/axiosInstance';
 import { useAuth } from '../contexts/AuthContext';
 
-interface User {
-  email?: string;
-  user_id?: string;
-  name?: string; // Add name to the User interface
-}
-
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
   const [userName, setUserName] = useState('');
-  const [loading, setLoading] = useState(true);
+  const { isAuthenticated, userInfo, logout } = useAuth();
   const router = useRouter();
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
-  const checkAuthentication = () => {
-    const storedToken = localStorage.getItem('token');
-    const storedUserInfo = localStorage.getItem('userInfo');
-
-    if (storedToken && storedUserInfo) {
-      try {
-        const parsedUser = JSON.parse(storedUserInfo);
-        setUser(parsedUser);
-        setIsAuthenticated(true);
-        console.log("Parsed user info:", parsedUser);
-      } catch (error) {
-        console.error("Error parsing user info:", error);
-        localStorage.removeItem('token');
-        localStorage.removeItem('userInfo');
-        setUser(null);
-        setIsAuthenticated(false);
-      }
-    } else {
-      setUser(null);
-      setIsAuthenticated(false);
-    }
-
-    setLoading(false);
-  };
-  const { logout } = useAuth();
-  const handleLogout = () => {
-    if (window.confirm('Are you sure you want to logout?')) {
-      logout();
-      checkAuthentication();
-      router.push("/")
-    }
-  };
-
   const fetchUserName = async () => {
-    if (!user?.user_id) return;
+    if (!userInfo?.user_id) return;
     try {
-      const response = await getUser(user.user_id);
+      const response = await getUser(userInfo.user_id);
       setUserName(response.data.user.name);
     } catch (error) {
       console.error("Error fetching user name:", error);
     }
   };
 
-
   useEffect(() => {
-    checkAuthentication();
-  }, []);
-
-  useEffect(() => {
-    if (user) {
+    if (userInfo) {
       fetchUserName();
-      console.log("username", userName)
     }
-  }, [user]);
+  }, [userInfo]);
+
+  const handleLogout = () => {
+    logout();
+    router.push("/")
+  };
 
   const baseClasses = "transition duration-300 font-medium ";
   const btnClass = "py-2.5 px-5 rounded-md text-center block";
@@ -109,7 +67,7 @@ const Navbar = () => {
             Contact
           </Link>
 
-          {isAuthenticated && user?.email ? (
+          {isAuthenticated && userInfo?.email ? (
             <div className="flex items-center space-x-3">
               <Link href="/profile" className={`bg-[#565ee0] text-white flex gap-2 ${btnClass} cursor-pointer`}>
                 <HiUserCircle className="text-2xl" /> {userName}
@@ -155,7 +113,7 @@ const Navbar = () => {
             Contact
           </Link>
 
-          {isAuthenticated && user?.email ? (
+          {isAuthenticated && userInfo?.email ? (
             <div className="flex flex-col items-start space-y-3">
               <Link href="/profile" className={`bg-[#565ee0] text-white flex gap-2 ${btnClass} cursor-pointer`}>
                 <HiUserCircle className="text-2xl" /> {userName}

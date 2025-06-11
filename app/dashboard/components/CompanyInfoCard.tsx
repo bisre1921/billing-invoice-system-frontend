@@ -57,11 +57,7 @@ const CompanyInfoCard = ({ company }: { company: any }) => {
           <div className="flex items-center">
             <CalendarIcon className="w-5 h-5 mr-3 text-[#6366f1]" />
             <p className="text-sm text-gray-600">
-              <span className="font-medium text-gray-800">Created:</span> {new Date(company?.created_at).toLocaleDateString(undefined, {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
+              <span className="font-medium text-gray-800">Address:</span> {company?.address}
             </p>
           </div>
         </div>
