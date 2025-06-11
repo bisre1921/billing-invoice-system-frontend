@@ -14,6 +14,8 @@ interface EditCustomerFormData {
   email: string;
   phone: string;
   address: string;
+  tin: string;
+  max_credit_amount: number;
 }
 
 const EditCustomerPage = () => {
@@ -62,13 +64,22 @@ const EditCustomerPage = () => {
     setError(null);
 
     try {
-      await updateCustomer(customerId as string, { ...data, company_id: companyId });
-      console.log('Customer updated:', data);
+      // Ensure max_credit_amount is a number and properly formatted
+      const formattedData = {
+        ...data,
+        company_id: companyId,
+        max_credit_amount: Number(data.max_credit_amount),
+        tin: data.tin.trim() // Remove any whitespace from TIN
+      };
+
+      await updateCustomer(customerId as string, formattedData);
+      console.log('Customer updated:', formattedData);
       alert('Customer updated successfully!');
       router.push('/dashboard/customers'); 
     } catch (error: any) {
       console.error('Failed to update customer:', error);
-      setError('Failed to update customer.');
+      const errorMessage = error.response?.data?.message || 'Failed to update customer. Please try again.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -114,49 +125,86 @@ const EditCustomerPage = () => {
           </h2>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div>
-              <label htmlFor="name" className="block text-sm font-semibold text-gray-700 tracking-wide">
-                Full Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                {...register('name', { required: 'Customer name is required' })}
-                className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 px-3 leading-tight focus:outline-none ${errors.name ? 'border-red-500' : ''}`}
-                placeholder="Enter customer's full name"
-              />
-              {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>}
-            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="name" className="block text-sm font-semibold text-gray-700 tracking-wide">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  {...register('name', { required: 'Customer name is required' })}
+                  className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 px-3 leading-tight focus:outline-none ${errors.name ? 'border-red-500' : ''}`}
+                  placeholder="Enter customer's full name"
+                />
+                {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>}
+              </div>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 tracking-wide">
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
-                {...register('email', {
-                  required: 'Email address is required',
-                  pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                })}
-                className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 px-3 leading-tight focus:outline-none ${errors.email ? 'border-red-500' : ''}`}
-                placeholder="customer@example.com"
-              />
-              {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
-            </div>
+              <div>
+                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 tracking-wide">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  {...register('email', {
+                    required: 'Email address is required',
+                    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  })}
+                  className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 px-3 leading-tight focus:outline-none ${errors.email ? 'border-red-500' : ''}`}
+                  placeholder="customer@example.com"
+                />
+                {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
+              </div>
 
-            <div>
-              <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 tracking-wide">
-                Phone Number
-              </label>
-              <input
-                type="tel"
-                id="phone"
-                {...register('phone', { required: 'Phone number is required' })}
-                className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 px-3 leading-tight focus:outline-none ${errors.phone ? 'border-red-500' : ''}`}
-                placeholder="+1 (555) 123-4567"
-              />
-              {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone.message}</p>}
+              <div>
+                <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 tracking-wide">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  {...register('phone', { required: 'Phone number is required' })}
+                  className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 px-3 leading-tight focus:outline-none ${errors.phone ? 'border-red-500' : ''}`}
+                  placeholder="+251 (911) 123-4567"
+                />
+                {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone.message}</p>}
+              </div>
+
+              <div>
+                <label htmlFor="tin" className="block text-sm font-semibold text-gray-700 tracking-wide">
+                  TIN Number
+                </label>
+                <input
+                  type="text"
+                  id="tin"
+                  {...register('tin', { required: 'TIN number is required' })}
+                  className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 px-3 leading-tight focus:outline-none ${errors.tin ? 'border-red-500' : ''}`}
+                  placeholder="Enter TIN number"
+                />
+                {errors.tin && <p className="mt-1 text-sm text-red-500">{errors.tin.message}</p>}
+              </div>
+
+              <div>
+                <label htmlFor="max_credit_amount" className="block text-sm font-semibold text-gray-700 tracking-wide">
+                  Credit Limit (ETB)
+                </label>
+                <input
+                  type="number"
+                  id="max_credit_amount"
+                  step="0.01"
+                  min="0"
+                  {...register('max_credit_amount', { 
+                    required: 'Credit limit is required',
+                    min: { value: 0, message: 'Credit limit must be positive' },
+                    valueAsNumber: true, // Ensures the value is converted to a number
+                    validate: value => !isNaN(value) || 'Please enter a valid number'
+                  })}
+                  className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 px-3 leading-tight focus:outline-none ${errors.max_credit_amount ? 'border-red-500' : ''}`}
+                  placeholder="0.00"
+                />
+                {errors.max_credit_amount && <p className="mt-1 text-sm text-red-500">{errors.max_credit_amount.message}</p>}
+              </div>
             </div>
 
             <div>
