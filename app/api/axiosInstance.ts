@@ -215,3 +215,15 @@ export const markInvoiceAsPaid = (invoiceId: string, paymentDate?: string) => {
     }
     return api.put(`/invoice/mark-as-paid/${invoiceId}`, payload);
   };
+
+export const importItemsFromCsv = (file: File, companyId: string) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("company_id", companyId);
+    
+    return api.post("/item/import", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  };
