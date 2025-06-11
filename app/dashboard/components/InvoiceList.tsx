@@ -84,9 +84,8 @@ const InvoiceList = ({ invoices }: InvoiceListProps) => {
     return (
       <tr key={invoice.id} className="hover:bg-gray-50 transition duration-150">
         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{invoice.reference_number}</td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{invoice.customerName}</td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{formattedDate}</td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${invoice.amount?.toLocaleString()}</td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{invoice.customerName}</td>        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{formattedDate}</td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">ETB {invoice.amount?.toLocaleString()}</td>
         <td className="px-6 py-4 whitespace-nowrap text-sm">
           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
             ${invoice.status === 'Paid' ? 'bg-green-100 text-green-800' :

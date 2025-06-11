@@ -101,7 +101,7 @@ const DashboardPage = () => {
 
   const activityItems = [
     { id: 1, type: 'invoice_sent', message: 'Invoice INV-2025-001 sent to Beta Industries.', timestamp: '5 minutes ago' },
-    { id: 2, type: 'payment_received', message: 'Payment of $550 received from Beta Industries.', timestamp: '15 minutes ago' },
+    { id: 2, type: 'payment_received', message: 'Payment of ETB 550 received from Beta Industries.', timestamp: '15 minutes ago' },
     { id: 3, type: 'new_customer', message: 'New customer "Epsilon Ltd." registered.', timestamp: '30 minutes ago' },
     { id: 4, type: 'invoice_updated', message: 'Invoice INV-2025-002 updated.', timestamp: '1 hour ago' },
     { id: 5, type: 'payment_failed', message: 'Payment for INV-2025-003 failed.', timestamp: '2 hours ago' },

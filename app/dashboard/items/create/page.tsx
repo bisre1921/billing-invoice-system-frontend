@@ -210,9 +210,8 @@ function CreateItemForm() {
                   <label htmlFor="selling_price" className="block text-sm font-medium text-gray-700">
                     Selling Price *
                   </label>
-                  <div className="mt-1 relative rounded-md shadow-sm">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <span className="text-gray-500 sm:text-sm">$</span>
+                  <div className="mt-1 relative rounded-md shadow-sm">                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <span className="text-gray-500 sm:text-sm">ETB</span>
                     </div>
                     <input
                       id="selling_price"

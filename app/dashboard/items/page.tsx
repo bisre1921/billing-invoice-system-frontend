@@ -231,7 +231,7 @@ const ItemsListPage = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.code}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.category}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.unit}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.selling_price.toFixed(2)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">ETB {item.selling_price.toFixed(2)}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex items-center space-x-2">
                         <button

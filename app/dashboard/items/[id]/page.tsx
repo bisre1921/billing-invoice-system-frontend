@@ -193,10 +193,9 @@ const ItemDetailPage = () => {
                   <div>
                     <span className="text-sm font-medium text-gray-500">Unit:</span>
                     <p className="text-sm text-gray-900 mt-1">{item.unit}</p>
-                  </div>
-                  <div>
+                  </div>                  <div>
                     <span className="text-sm font-medium text-gray-500">Selling Price:</span>
-                    <p className="text-lg font-bold text-green-600 mt-1">${item.selling_price.toFixed(2)}</p>
+                    <p className="text-lg font-bold text-green-600 mt-1">ETB {item.selling_price.toFixed(2)}</p>
                   </div>
                 </div>
               </div>

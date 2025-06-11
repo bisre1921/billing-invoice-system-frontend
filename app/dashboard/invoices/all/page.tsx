@@ -119,7 +119,7 @@ const CompanyInvoicesPage = () => {
                         {invoice.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 text-right">${invoice.amount.toFixed(2)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 text-right">ETB {invoice.amount.toFixed(2)}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"> {/* Removed space-x-2 from Link and added to td */}
                       <Link href={`/dashboard/invoices/${invoice.id}`} className="text-indigo-600 hover:text-indigo-800 flex items-center justify-end">
                         <EyeIcon className="w-5 h-5 mr-1" />
