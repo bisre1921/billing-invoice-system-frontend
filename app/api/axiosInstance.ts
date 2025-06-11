@@ -147,6 +147,18 @@ export const getAllItems = (companyId: string) => {
     return api.get(`/item/company/${companyId}`);
 }
 
+export const getItem = (itemId: string) => {
+    return api.get(`/item/${itemId}`);
+}
+
+export const updateItem = (itemId: string, data: any) => {
+    return api.put(`/item/update/${itemId}`, data);
+}
+
+export const deleteItem = (itemId: string) => {
+    return api.delete(`/item/delete/${itemId}`);
+}
+
 export const downloadInvoiceApi = (invoiceId: string) => {
     return api.get(`/invoice/download/${invoiceId}`, {
       responseType: "blob",

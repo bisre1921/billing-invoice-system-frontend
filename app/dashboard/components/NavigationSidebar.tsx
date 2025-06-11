@@ -6,6 +6,7 @@ import {
   CogIcon,
   ArrowLeftOnRectangleIcon,
   DocumentCheckIcon,
+  ArchiveBoxIcon, // Added ArchiveBoxIcon for Items
 } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
 import React, { Fragment, useState } from "react";
@@ -43,6 +44,11 @@ const NavigationSidebar = () => {
       href: "/dashboard/invoices/all",
       label: "Invoices",
       icon: <DocumentDuplicateIcon className="w-5 h-5 mr-3 text-gray-400" />,
+    },
+    {
+      href: "/dashboard/items",
+      label: "Items",
+      icon: <ArchiveBoxIcon className="w-5 h-5 mr-3 text-gray-400" />,
     },
     {
       href: "/dashboard/customers",
@@ -109,7 +115,8 @@ const NavigationSidebar = () => {
 
       <Transition appear show={showLogoutDialog} as={Fragment}>
         <Dialog as="div" className="relative z-50" onClose={handleLogoutCancel}>
-          {" "}          <Transition.Child
+          {" "}
+          <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
             enterFrom="opacity-0"
