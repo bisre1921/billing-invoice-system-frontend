@@ -5,7 +5,6 @@ import NavigationSidebar from './components/NavigationSidebar';
 import PageHeader from './components/PageHeader';
 import BillingOverview from './components/BillingOverview';
 import InvoiceList from './components/InvoiceList';
-import ActivityFeed from './components/ActivityFeed';
 import QuickActions from './components/QuickActions';
 import CompanyInfoCard from './components/CompanyInfoCard';
 import Link from 'next/link';
@@ -99,14 +98,6 @@ const DashboardPage = () => {
       }
   };
 
-  const activityItems = [
-    { id: 1, type: 'invoice_sent', message: 'Invoice INV-2025-001 sent to Beta Industries.', timestamp: '5 minutes ago' },
-    { id: 2, type: 'payment_received', message: 'Payment of ETB 550 received from Beta Industries.', timestamp: '15 minutes ago' },
-    { id: 3, type: 'new_customer', message: 'New customer "Epsilon Ltd." registered.', timestamp: '30 minutes ago' },
-    { id: 4, type: 'invoice_updated', message: 'Invoice INV-2025-002 updated.', timestamp: '1 hour ago' },
-    { id: 5, type: 'payment_failed', message: 'Payment for INV-2025-003 failed.', timestamp: '2 hours ago' },
-  ];
-
   const quickActions = [
     { label: 'Generate Invoice', icon: <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7m14-8v10a7 7 0 01-7 7m0 0l-7-7m7 7V3"></path></svg>, href: '/dashboard/invoices/create' },
     { label: 'Create Item', icon: <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7m14-8v10a7 7 0 01-7 7m0 0l-7-7m7 7V3"></path></svg>, href: '/dashboard/items/create' },
@@ -145,7 +136,7 @@ const DashboardPage = () => {
             </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-1 gap-8">
           <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
             <div className="px-6 py-5 border-b border-gray-200 bg-gray-50">
               <div className="flex items-center justify-between">
@@ -153,14 +144,7 @@ const DashboardPage = () => {
                 <Link href="/dashboard/invoices/all" className="text-primary-600 hover:text-primary-700 font-medium transition duration-150 text-sm">View All</Link>
               </div>
             </div>
-            <InvoiceList invoices={invoices?.slice(0, 5)} /> 
-          </div>
-
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-            <div className="px-6 py-5 border-b border-gray-200 bg-gray-50">
-              <h2 className="text-lg font-semibold text-gray-800 tracking-tight">Activity Feed</h2>
-            </div>
-            <ActivityFeed items={activityItems.slice(0, 5)} /> 
+            <InvoiceList invoices={invoices?.slice(0, 5)} />
           </div>
         </div>
       </div>
