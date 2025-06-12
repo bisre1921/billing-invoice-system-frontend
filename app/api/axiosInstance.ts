@@ -32,6 +32,8 @@ api.interceptors.response.use(
     }
 );
 
+export default api;
+
 interface UserData {
     "address": string,
     "email": string,
@@ -227,3 +229,19 @@ export const importItemsFromCsv = (file: File, companyId: string) => {
       },
     });
   };
+
+export const getAllReports = () => {
+  return api.get("/report/all");
+};
+
+export const getReportById = (id: string) => {
+  return api.get(`/report/${id}`);
+};
+
+export const deleteReport = (id: string) => {
+  return api.delete(`/report/${id}`);
+};
+
+export const downloadReportCsv = (id: string) => {
+  return api.get(`/report/download/${id}` , { responseType: "blob" });
+};
