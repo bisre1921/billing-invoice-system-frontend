@@ -3,7 +3,6 @@ import {
   HomeIcon,
   DocumentDuplicateIcon,
   UserGroupIcon,
-  CogIcon,
   ArrowLeftOnRectangleIcon,
   DocumentCheckIcon,
   ArchiveBoxIcon, // Added ArchiveBoxIcon for Items
@@ -64,11 +63,6 @@ const NavigationSidebar = () => {
       href: "/dashboard/reports/all",
       label: "Reports",
       icon: <DocumentCheckIcon className="w-5 h-5 mr-3 text-gray-400" />,
-    },
-    {
-      href: "/dashboard/settings",
-      label: "Settings",
-      icon: <CogIcon className="w-5 h-5 mr-3 text-gray-400" />,
     },
   ];
 

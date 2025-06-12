@@ -43,9 +43,6 @@ const CATEGORY_OPTIONS = [
 const STATUS_OPTIONS = [
   { value: "paid", label: "Paid" },
   { value: "unpaid", label: "Unpaid" },
-  { value: "partial", label: "Partially Paid" },
-  { value: "overdue", label: "Overdue" },
-  { value: "cancelled", label: "Cancelled" },
 ];
 
 // Define date range options
@@ -266,7 +263,8 @@ const SalesReportPage = () => {
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Items</th>
                 <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Total Amount</th>
               </tr>
-            </thead><tbody className="bg-white divide-y divide-gray-200">
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
               {(!salesData || salesData.length === 0) && !loading && (
                 <tr>
                   <td colSpan={6} className="text-center py-6 text-gray-500">No sales data found for the selected filters.</td>
@@ -278,8 +276,7 @@ const SalesReportPage = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{row.customer_name}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{row.status}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                    <ul className="list-disc ml-4">
-                      {row.items.map((item: any, idx: number) => (
+                    <ul className="list-disc ml-4">                      {row.items.map((item: SalesReportItem, idx: number) => (
                         <li key={idx}>
                           <span className="font-semibold">{item.item_name}</span> ({item.category}) - Qty: {item.quantity}, Unit Price: ETB {item.unit_price}, Subtotal: ETB {item.subtotal}
                         </li>
