@@ -31,27 +31,28 @@ const AllReportsPage = () => {
     setCompanyId(localStorageCompany.id);
   }, []);
 
-  useEffect(() => {
-    if (companyId) {
-      fetchReports();
-    }
-  }, [companyId]);
-
-  const fetchReports = async () => {
+  const fetchReports = React.useCallback(async () => {
     setLoading(true);
     setError('');
     try {
       const response = await getAllReportsByCompany(companyId);
       setReports(response.data);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Failed to fetch reports:', error);
       setError('Failed to load reports.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [companyId]);
+
+  useEffect(() => {
+    if (companyId) {
+      fetchReports();
+    }
+  }, [companyId, fetchReports]);
 
   const filteredReports = useMemo(() => {
+    if (!reports) return [];
     if (!searchTerm) return reports;
     return reports.filter(report =>
       report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
