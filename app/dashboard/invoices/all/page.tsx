@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import PageHeader from "../../components/PageHeader";
 import NavigationSidebar from "../../components/NavigationSidebar";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { getCompany, getInvoicesByCompany } from "@/app/api/axiosInstance";
 import Link from "next/link";
 import { format } from "date-fns";
@@ -55,10 +55,9 @@ const CompanyInvoicesPage = () => {
       const response = await getInvoicesByCompany(companyId);
       setInvoices(response.data);
       setLoading(false);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error fetching company invoices:", error);
       setError("Failed to load invoices.");
-      setLoading(false);
     }
   };
 
@@ -193,7 +192,9 @@ const CompanyInvoicesPage = () => {
                           {format(new Date(invoice.date), "MMM d, yyyy")}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                          {format(new Date(invoice.due_date), "MMM d, yyyy")}
+                          {invoice.due_date
+                            ? format(new Date(invoice.due_date), "MMM d, yyyy")
+                            : "N/A"}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span

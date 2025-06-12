@@ -33,7 +33,6 @@ const AddCustomerPage = () => {
     const localStorageCompany = JSON.parse(localStorage.getItem('company') || '{}');
     setCompanyId(localStorageCompany.id);
   }, []);
-
   const onSubmit: SubmitHandler<AddCustomerFormData> = async (data) => {
     if (!companyId) {
       setError('Company ID not found. Please ensure you are logged in.');
@@ -45,10 +44,13 @@ const AddCustomerPage = () => {
 
     try {
       // Ensure max_credit_amount is a number and properly formatted
+      // Set current_credit_available equal to max_credit_amount initially
+      const maxCreditAmount = Number(data.max_credit_amount);
       const formattedData = {
         ...data,
         company_id: companyId,
-        max_credit_amount: Number(data.max_credit_amount),
+        max_credit_amount: maxCreditAmount,
+        current_credit_available: maxCreditAmount, // Initialize available credit to max limit
         tin: data.tin.trim() // Remove any whitespace from TIN
       };
 

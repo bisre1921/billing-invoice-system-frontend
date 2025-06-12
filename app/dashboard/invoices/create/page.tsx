@@ -19,9 +19,9 @@ interface InvoiceItem {
 interface InvoiceFormData {
   reference_number: string;
   customer_id: string;
-  date: string;
-  due_date: string;
-  payment_date: string;
+  payment_type: 'cash' | 'credit';
+  due_date?: string;
+  payment_date?: string;
   status: string;
   terms: string;
   items: InvoiceItem[];
@@ -45,7 +45,6 @@ const CreateInvoicePage = () => {
   const [error, setError] = useState('');
 
   const router = useRouter();
-
   const {
     register,
     handleSubmit,
@@ -54,6 +53,7 @@ const CreateInvoicePage = () => {
     watch,
   } = useForm<InvoiceFormData>({
     defaultValues: {
+      payment_type: undefined,
       items: [{ item_name: '', quantity: 1, unit_price: 0 }],
     },
   });
@@ -102,17 +102,20 @@ const CreateInvoicePage = () => {
       setLoading(false);
     }
   }
-
   const onSubmit = async (data: InvoiceFormData) => {
     try {
       const payload = {
         reference_number: data.reference_number,
         customer_id: data.customer_id,
         company_id: companyId,
-        payment_date: data.payment_date ? `${data.payment_date}T00:00:00Z` : "",
+        payment_type: data.payment_type,
+        // Only include due_date if payment type is credit
+        ...(data.payment_type === 'credit' && data.due_date && { due_date: `${data.due_date}T00:00:00Z` }),
+        // Only include payment_date if it's provided
+        ...(data.payment_date && { payment_date: `${data.payment_date}T00:00:00Z` }),
         terms: data.terms,
         items: data.items.map(item => ({
-          item_name: item.item_name, // Ensure this sends the item ID
+          item_name: item.item_name,
           quantity: Number(item.quantity),
           unit_price: Number(item.unit_price),
           discount: Number(item.discount || 0),
@@ -127,9 +130,13 @@ const CreateInvoicePage = () => {
       } else {
         console.error('Invoice created successfully, but no ID received for redirection.');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to create invoice:', error);
-      alert('Failed to create invoice. Check console for details.');
+      let errorMessage = 'Failed to create invoice. Check console for details.';
+      if (error instanceof Error) {
+        errorMessage = `Error: ${error.message}`;
+      }
+      alert(errorMessage);
     }
   };
   
@@ -144,9 +151,7 @@ const CreateInvoicePage = () => {
         <PageHeader title="Create New Invoice" />
 
         <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-xl shadow-lg p-8 space-y-6 border border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Invoice Details</h2>
-
-          <div className="grid md:grid-cols-2 gap-6">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">Invoice Details</h2>          <div className="grid md:grid-cols-2 gap-6">
             <div>
               <label className="text-sm font-semibold text-gray-600 mb-1 block">Reference Number</label>
               <input
@@ -155,11 +160,15 @@ const CreateInvoicePage = () => {
                 placeholder="INV-2025-001"
                 className="input-style"
               />
+              {errors.reference_number && <p className="text-red-500 text-xs mt-1">Reference number is required</p>}
             </div>
 
             <div>
               <label className="text-sm font-semibold text-gray-600 mb-1 block">Customer</label>
-              <select {...register('customer_id', { required: true })} className="input-style">
+              <select 
+                {...register('customer_id', { required: true })}
+                className="input-style"
+              >
                 <option value="">Select Customer</option>
                 {customers?.map(customer => (
                   <option key={customer.id} value={customer.id}>
@@ -167,34 +176,40 @@ const CreateInvoicePage = () => {
                   </option>
                 ))}
               </select>
+              {errors.customer_id && <p className="text-red-500 text-xs mt-1">Customer is required</p>}
             </div>
 
-            {/* REMOVE Issue Date */}
-            {/* <div>
-              <label className="text-sm font-semibold text-gray-600 mb-1 block">Issue Date</label>
-              <input type="date" {...register('date', { required: true })} className="input-style" />
-            </div> */}
+            <div>
+              <label className="text-sm font-semibold text-gray-600 mb-1 block">Payment Type</label>
+              <select 
+                {...register('payment_type', { required: true })}
+                className="input-style"
+              >
+                <option value="">Select Payment Type</option>
+                <option value="cash">Cash</option>
+                <option value="credit">Credit</option>
+              </select>
+              {errors.payment_type && <p className="text-red-500 text-xs mt-1">Payment type is required</p>}
+            </div>
 
-            {/* REMOVE Due Date */}
-            {/* <div>
-              <label className="text-sm font-semibold text-gray-600 mb-1 block">Due Date</label>
-              <input type="date" {...register('due_date', { required: true })} className="input-style" />
-            </div> */}
+            {watch('payment_type') === 'credit' && (
+              <div>
+                <label className="text-sm font-semibold text-gray-600 mb-1 block">Due Date</label>
+                <input 
+                  type="date" 
+                  {...register('due_date', { 
+                    required: watch('payment_type') === 'credit' ? 'Due date is required for credit payments' : false 
+                  })} 
+                  className="input-style" 
+                />
+                {errors.due_date && <p className="text-red-500 text-xs mt-1">{errors.due_date.message as string}</p>}
+              </div>
+            )}
 
             <div>
               <label className="text-sm font-semibold text-gray-600 mb-1 block">Payment Date (Optional)</label>
               <input type="date" {...register('payment_date')} className="input-style" />
             </div>
-
-            {/* <div>
-              <label className="text-sm font-semibold text-gray-600 mb-1 block">Status</label>
-              <select {...register('status', { required: true })} className="input-style">
-                <option value="">Select Status</option>
-                <option value="Paid">Paid</option>
-                <option value="Unpaid">Unpaid</option>
-                <option value="Pending">Pending</option>
-              </select>
-            </div> */}
 
             <div className="md:col-span-2">
               <label className="text-sm font-semibold text-gray-600 mb-1 block">Terms</label>
