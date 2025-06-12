@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import PageHeader from '../components/PageHeader';
 import NavigationSidebar from '../components/NavigationSidebar';
+import Pagination from '../components/Pagination';
 import { getAllItems, importItemsFromCsv, deleteItem } from '@/app/api/axiosInstance';
 import { PlusIcon, EyeIcon, PencilIcon, MagnifyingGlassIcon, ArrowUpOnSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 
@@ -32,6 +33,8 @@ const ItemsListPage = () => {
   const [importError, setImportError] = useState<string | null>(null);
   const [importSuccess, setImportSuccess] = useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     const companyData = localStorage.getItem('company');
@@ -132,6 +135,14 @@ const ItemsListPage = () => {
     );
   }, [items, searchTerm]);
 
+  // Pagination logic
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+  const paginatedItems = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return filteredItems.slice(start, end);
+  }, [filteredItems, currentPage, itemsPerPage]);
+
   return (
     <div className="bg-gray-50 min-h-screen flex">
       <NavigationSidebar />
@@ -225,7 +236,7 @@ const ItemsListPage = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredItems.map((item) => (
+                {paginatedItems.map((item) => (
                   <tr key={item.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.name}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.code}</td>
@@ -261,6 +272,17 @@ const ItemsListPage = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {!loading && !error && filteredItems.length > 0 && (
+          <div className="mt-6">
+            <Pagination 
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           </div>
         )}
       </div>
