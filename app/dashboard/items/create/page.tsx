@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import PageHeader from '../../components/PageHeader';
 import NavigationSidebar from '../../components/NavigationSidebar';
 import Link from 'next/link';
-import { addItem, getAllCustomers } from '@/app/api/axiosInstance';
+import { addItem } from '@/app/api/axiosInstance';
 import { useRouter } from 'next/navigation';
 
 const ITEM_CATEGORIES = [
@@ -40,14 +40,10 @@ interface ItemFormData {
 
 function CreateItemForm() {
   const [companyId, setCompanyId] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
   const router = useRouter();
   const {
     register,
     handleSubmit,
-    control,
     formState: { errors },
     watch,
   } = useForm<ItemFormData>({
@@ -61,52 +57,41 @@ function CreateItemForm() {
     },
   });
 
-//   const { fields, append, remove } = useFieldArray({
-//     control,
-//     name: 'items',
-//   });
-
   useEffect(() => {
     const localStorageCompany = JSON.parse(localStorage.getItem('company') || '{}');
     setCompanyId(localStorageCompany.id);
   }, []);
 
   const onSubmit = async (data: ItemFormData) => {
-    console.log('Form Data:', data);
     try {
-        const sellingPriceNumber = parseFloat(data.selling_price as any);
-        if (isNaN(sellingPriceNumber)) {
-            alert('Please enter a valid number for the selling price.');
-            return;
-        }
-        const payload = {
-            name: data.name,
-            code: data.code,
-            category: data.category,
-            unit: data.unit,
-            selling_price: sellingPriceNumber,
-            description: data.description,
-            company_id: companyId,
-        };
-
+      const sellingPriceNumber = typeof data.selling_price === 'string' ? parseFloat(data.selling_price) : data.selling_price;
+      if (isNaN(sellingPriceNumber)) {
+        alert('Please enter a valid number for the selling price.');
+        return;
+      }
+      const payload = {
+        name: data.name,
+        code: data.code,
+        category: data.category,
+        unit: data.unit,
+        selling_price: sellingPriceNumber,
+        description: data.description,
+        company_id: companyId,
+      };
       const response = await addItem(payload);
-      console.log('item created:', response.data);
-      console.log('item created successfully for item id:', response.data.id);
       const newItemId = response.data.id;
-      console.log('New Item ID:', newItemId);
       if (newItemId) {
         router.push(`/dashboard/items/${newItemId}`);
       } else {
         console.error('Item created successfully, but no ID received for redirection.');
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Failed to create item:', error);
       alert('Failed to create item. Check console for details.');
     }
   };
 
-//   if (loading) return <div className="p-6 text-lg">Loading customers...</div>;
-  if (error) return <div className="p-6 text-red-500 text-lg">Error: {error}</div>;  return (
+  return (
     <div className="bg-gray-50 min-h-screen flex">
       <NavigationSidebar />
       <div className="flex-1 p-6 md:p-10">
@@ -221,8 +206,8 @@ function CreateItemForm() {
                         required: 'Selling price is required',
                         min: { value: 0, message: 'Price must be positive' }
                       })}
-                      className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 pr-3 sm:text-sm border-gray-300 rounded-md py-2"
-                      placeholder="0.00"
+                      className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-12 pr-3 sm:text-sm border-gray-300 rounded-md py-2"
+                      placeholder={!watch('selling_price') ? '0.00' : ''}
                     />
                   </div>
                   {errors.selling_price && (

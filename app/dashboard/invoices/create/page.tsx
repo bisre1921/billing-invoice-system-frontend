@@ -210,10 +210,13 @@ const CreateInvoicePage = () => {
               </div>
             )}
 
-            <div>
-              <label className="text-sm font-semibold text-gray-600 mb-1 block">Payment Date (Optional)</label>
-              <input type="date" {...register('payment_date')} className="input-style" />
-            </div>
+            {/* Only show Payment Date if payment type is cash */}
+            {watch('payment_type') !== 'credit' && (
+              <div>
+                <label className="text-sm font-semibold text-gray-600 mb-1 block">Payment Date (Optional)</label>
+                <input type="date" {...register('payment_date')} className="input-style" />
+              </div>
+            )}
 
             <div className="md:col-span-2">
               <label className="text-sm font-semibold text-gray-600 mb-1 block">Terms</label>
@@ -295,6 +298,10 @@ const CreateInvoicePage = () => {
           </div>
 
           {backendError && <div className="text-red-500 text-sm mb-2">{backendError}</div>}
+          {/* Show backend error for credit limit exceeded */}
+          {typeof backendError === 'string' && backendError.includes("available credit") && (
+            <div className="text-red-600 text-sm font-semibold mb-2">{backendError}</div>
+          )}
 
           <div className="flex justify-end space-x-3 mt-10">
             <Link
