@@ -134,6 +134,12 @@ const CompanyInvoicesPage = () => {
             />
             <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
           </div>
+          <Link
+            href="/dashboard/invoices/create"
+            className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition"
+          >
+            + Create Invoice
+          </Link>
         </div>{" "}
         {invoices?.length === 0 ? (
           <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">

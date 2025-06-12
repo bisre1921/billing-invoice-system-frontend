@@ -198,7 +198,7 @@ const InvoiceDetailPage = () => {
                 </div>
                 {invoice.status !== 'Paid' && (
                   <div>
-                    <span className="font-medium text-gray-600">Due Date:</span> {new Date(invoice.due_date).toLocaleDateString()}
+                    <span className="font-medium text-gray-600">Due Date:</span> {invoice.due_date ? (new Date(invoice.due_date).toString() !== 'Invalid Date' ? new Date(invoice.due_date).toLocaleDateString() : 'N/A') : 'N/A'}
                   </div>
                 )}
                 {invoice.payment_date && (

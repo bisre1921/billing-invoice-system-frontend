@@ -35,6 +35,7 @@ interface Customer {
 interface Item {
   id: string;
   name: string;
+  selling_price: number;
 }
 
 const CreateInvoicePage = () => {
@@ -43,6 +44,7 @@ const CreateInvoicePage = () => {
   const [companyId, setCompanyId] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [backendError, setBackendError] = useState('');
 
   const router = useRouter();
   const {
@@ -51,6 +53,8 @@ const CreateInvoicePage = () => {
     control,
     formState: { errors },
     watch,
+    setValue,
+    getValues,
   } = useForm<InvoiceFormData>({
     defaultValues: {
       payment_type: undefined,
@@ -68,32 +72,23 @@ const CreateInvoicePage = () => {
     setCompanyId(localStorageCompany.id);
   }, []);
 
-  useEffect(() => {
-    if (companyId) {
-      fetchCustomers();
-      fetchItems();
-    }
-  }, [companyId]);
-
-  const fetchCustomers = async () => {
+  const fetchCustomers = React.useCallback(async () => {
     try {
       setLoading(true);
       const response = await getAllCustomers(companyId);
       setCustomers(response.data);
       setLoading(false);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error fetching customers:', error);
       setError('Failed to load customers.');
       setLoading(false);
     }
-  };
+  }, [companyId]);
 
-  const fetchItems = async () => {
+  const fetchItems = React.useCallback(async () => {
     try {
       setLoading(true);
       const response = await getAllItems(companyId);
-      console.log("company id: ", companyId);
-      console.log('Items:', response.data);
       setItems(response.data);
       setLoading(false);
     } catch (error) {
@@ -101,17 +96,24 @@ const CreateInvoicePage = () => {
       setError('Failed to load items.');
       setLoading(false);
     }
-  }
+  }, [companyId]);
+
+  useEffect(() => {
+    if (companyId) {
+      fetchCustomers();
+      fetchItems();
+    }
+  }, [companyId, fetchCustomers, fetchItems]);
+
   const onSubmit = async (data: InvoiceFormData) => {
+    setBackendError('');
     try {
       const payload = {
         reference_number: data.reference_number,
         customer_id: data.customer_id,
         company_id: companyId,
         payment_type: data.payment_type,
-        // Only include due_date if payment type is credit
         ...(data.payment_type === 'credit' && data.due_date && { due_date: `${data.due_date}T00:00:00Z` }),
-        // Only include payment_date if it's provided
         ...(data.payment_date && { payment_date: `${data.payment_date}T00:00:00Z` }),
         terms: data.terms,
         items: data.items.map(item => ({
@@ -121,22 +123,24 @@ const CreateInvoicePage = () => {
           discount: Number(item.discount || 0),
         })),
       };
-      console.log("Payload:", payload);
       const response = await generateInvoice(payload);
-      console.log('Invoice created:', response.data);
       const newInvoiceId = response.data.invoice.id;
       if (newInvoiceId) {
         router.push(`/dashboard/invoices/${newInvoiceId}`);
       } else {
-        console.error('Invoice created successfully, but no ID received for redirection.');
+        setBackendError('Invoice created successfully, but no ID received for redirection.');
       }
-    } catch (error: unknown) {
-      console.error('Failed to create invoice:', error);
+    } catch (error) {
       let errorMessage = 'Failed to create invoice. Check console for details.';
-      if (error instanceof Error) {
-        errorMessage = `Error: ${error.message}`;
+      if (typeof error === 'object' && error && 'response' in error) {
+        const err = error as { response?: { data?: { message?: string } } };
+        if (err.response?.data?.message) {
+          errorMessage = err.response.data.message;
+        }
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
       }
-      alert(errorMessage);
+      setBackendError(errorMessage);
     }
   };
   
@@ -222,24 +226,28 @@ const CreateInvoicePage = () => {
 
             {fields.map((field, index) => (
               <div key={field.id} className="grid md:grid-cols-5 gap-4 mb-4 bg-gray-50 p-4 rounded-lg">
-
                 <div>
-                  <select {...register(`items.${index}.item_name`, { required: true })} className="input-style">
+                  <select
+                    {...register(`items.${index}.item_name`, { required: true })}
+                    className="input-style"
+                    onChange={e => {
+                      const selectedItem = items.find(i => i.name === e.target.value);
+                      if (selectedItem) {
+                        // Set the unit price for this item
+                        const updated = getValues('items');
+                        updated[index].unit_price = selectedItem.selling_price || 0;
+                        setValue('items', updated);
+                      }
+                      // Call the original onChange
+                      register(`items.${index}.item_name`).onChange(e);
+                    }}
+                  >
                     <option value="">Select Item Name</option>
                     {items?.map(item => (
-                      <option key={item.id} value={item.name}>
-                        {item.name}
-                      </option>
+                      <option key={item.id} value={item.name}>{item.name}</option>
                     ))}
                   </select>
                 </div>
-
-                {/* <input
-                  {...register(`items.${index}.item_name`, { required: true })}
-                  placeholder="Item Name"
-                  className="input-style md:col-span-2"
-                /> */}
-
                 <input
                   type="number"
                   {...register(`items.${index}.quantity`, { required: true, min: 1 })}
@@ -248,13 +256,22 @@ const CreateInvoicePage = () => {
                 />
                 <input
                   type="number"
+                  step="0.01"
+                  min="0"
                   {...register(`items.${index}.unit_price`, { required: true })}
                   placeholder="Unit Price"
                   className="input-style"
                 />
                 <input
                   type="number"
-                  {...register(`items.${index}.discount`)}
+                  step="0.01"
+                  min="0"
+                  max="100"
+                  {...register(`items.${index}.discount`, {
+                    min: { value: 0, message: 'Discount cannot be negative' },
+                    max: { value: 100, message: 'Discount cannot exceed 100%' },
+                    validate: value => (value === undefined || value === null || value === '' || (!isNaN(value) && value >= 0 && value <= 100)) || 'Discount must be between 0 and 100',
+                  })}
                   placeholder="Discount"
                   className="input-style"
                 />
@@ -276,6 +293,8 @@ const CreateInvoicePage = () => {
               + Add Item
             </button>
           </div>
+
+          {backendError && <div className="text-red-500 text-sm mb-2">{backendError}</div>}
 
           <div className="flex justify-end space-x-3 mt-10">
             <Link
