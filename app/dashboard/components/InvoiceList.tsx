@@ -41,7 +41,7 @@ const InvoiceList = ({ invoices }: InvoiceListProps) => {
           })
         );
         setInvoiceDetails(invoicesWithNames);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Error fetching customer details:", error);
         setError("Failed to load customer details.");
       } finally {
@@ -79,26 +79,26 @@ const InvoiceList = ({ invoices }: InvoiceListProps) => {
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
         {invoiceDetails.map((invoice) => {
-    const formattedDate = format(new Date(invoice.due_date), 'MMMM dd, yyyy');
+          const formattedDate = invoice.due_date ? format(new Date(invoice.due_date), 'MMMM dd, yyyy') : 'N/A';
 
-    return (
-      <tr key={invoice.id} className="hover:bg-gray-50 transition duration-150">
-        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{invoice.reference_number}</td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{invoice.customerName}</td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{formattedDate}</td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${invoice.amount?.toLocaleString()}</td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm">
-          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-            ${invoice.status === 'Paid' ? 'bg-green-100 text-green-800' :
-              invoice.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : invoice.status === 'Overdue' ? 'bg-red-100 text-red-800' :
-              invoice.status === 'Draft' ? 'bg-gray-100 text-gray-800' : 'bg-gray-100 text-gray-800'
-          }`}>
-            {invoice.status}
-          </span>
-        </td>
-      </tr>
-    );
-  })}
+          return (
+            <tr key={invoice.id} className="hover:bg-gray-50 transition duration-150">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{invoice.reference_number}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{invoice.customerName}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{formattedDate}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">ETB {invoice.amount?.toLocaleString()}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm">
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                  ${invoice.status === 'Paid' ? 'bg-green-100 text-green-800' :
+                    invoice.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : invoice.status === 'Overdue' ? 'bg-red-100 text-red-800' :
+                    invoice.status === 'Draft' ? 'bg-gray-100 text-gray-800' : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {invoice.status}
+                </span>
+              </td>
+            </tr>
+          );
+        })}
 
           {invoiceDetails.length === 0 && !loading && !error && (
             <tr>

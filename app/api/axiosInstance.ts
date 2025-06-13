@@ -32,6 +32,8 @@ api.interceptors.response.use(
     }
 );
 
+export default api;
+
 interface UserData {
     "address": string,
     "email": string,
@@ -147,6 +149,18 @@ export const getAllItems = (companyId: string) => {
     return api.get(`/item/company/${companyId}`);
 }
 
+export const getItem = (itemId: string) => {
+    return api.get(`/item/${itemId}`);
+}
+
+export const updateItem = (itemId: string, data: any) => {
+    return api.put(`/item/update/${itemId}`, data);
+}
+
+export const deleteItem = (itemId: string) => {
+    return api.delete(`/item/delete/${itemId}`);
+}
+
 export const downloadInvoiceApi = (invoiceId: string) => {
     return api.get(`/invoice/download/${invoiceId}`, {
       responseType: "blob",
@@ -203,3 +217,31 @@ export const markInvoiceAsPaid = (invoiceId: string, paymentDate?: string) => {
     }
     return api.put(`/invoice/mark-as-paid/${invoiceId}`, payload);
   };
+
+export const importItemsFromCsv = (file: File, companyId: string) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("company_id", companyId);
+    
+    return api.post("/item/import", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  };
+
+export const getAllReports = () => {
+  return api.get("/report/all");
+};
+
+export const getReportById = (id: string) => {
+  return api.get(`/report/${id}`);
+};
+
+export const deleteReport = (id: string) => {
+  return api.delete(`/report/${id}`);
+};
+
+export const downloadReportCsv = (id: string) => {
+  return api.get(`/report/download/${id}` , { responseType: "blob" });
+};

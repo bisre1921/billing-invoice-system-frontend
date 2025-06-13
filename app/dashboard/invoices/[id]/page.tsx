@@ -198,7 +198,7 @@ const InvoiceDetailPage = () => {
                 </div>
                 {invoice.status !== 'Paid' && (
                   <div>
-                    <span className="font-medium text-gray-600">Due Date:</span> {new Date(invoice.due_date).toLocaleDateString()}
+                    <span className="font-medium text-gray-600">Due Date:</span> {invoice.due_date ? (new Date(invoice.due_date).toString() !== 'Invalid Date' ? new Date(invoice.due_date).toLocaleDateString() : 'N/A') : 'N/A'}
                   </div>
                 )}
                 {invoice.payment_date && (
@@ -231,16 +231,16 @@ const InvoiceDetailPage = () => {
                   <tr key={item.item_name} className="border-t">
                     <td className="px-6 py-4">{item.item_name}</td>
                     <td className="px-6 py-4 text-right">{item.quantity}</td>
-                    <td className="px-6 py-4 text-right">${item.unit_price.toFixed(2)}</td>
+                    <td className="px-6 py-4 text-right">ETB {item.unit_price.toFixed(2)}</td>
                     <td className="px-6 py-4 text-right">{item.discount ?? 0}%</td>
-                    <td className="px-6 py-4 text-right font-semibold text-[#565ee0]">${item.subtotal.toFixed(2)}</td>
+                    <td className="px-6 py-4 text-right font-semibold text-[#565ee0]">ETB {item.subtotal.toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
               <tfoot className="bg-[#f9f9ff] font-bold text-gray-800">
                 <tr>
                   <td colSpan={4} className="px-6 py-4 text-right">Total:</td>
-                  <td className="px-6 py-4 text-right text-xl text-[#565ee0]">${invoice.amount.toFixed(2)}</td>
+                  <td className="px-6 py-4 text-right text-xl text-[#565ee0]">ETB {invoice.amount.toFixed(2)}</td>
                 </tr>
               </tfoot>
             </table>

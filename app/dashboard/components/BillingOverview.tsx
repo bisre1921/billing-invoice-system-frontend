@@ -61,7 +61,7 @@ const BillingOverview = ({ invoices, customers }: { invoices: Invoice[], custome
               </div>
               <div>
                 <p className="text-sm text-gray-600 font-medium">This Month Revenue (Paid)</p>
-                <p className="text-xl font-bold text-green-700">${paidRevenue.toLocaleString()}</p>
+                <p className="text-xl font-bold text-green-700">ETB {paidRevenue.toLocaleString()}</p>
               </div>
             </div>
           </div>
@@ -72,7 +72,7 @@ const BillingOverview = ({ invoices, customers }: { invoices: Invoice[], custome
               </div>
               <div>
                 <p className="text-sm text-gray-600 font-medium">This Month Revenue (Unpaid)</p>
-                <p className="text-xl font-bold text-orange-700">${unpaidRevenue.toLocaleString()}</p>
+                <p className="text-xl font-bold text-orange-700">ETB {unpaidRevenue.toLocaleString()}</p>
               </div>
             </div>
           </div>

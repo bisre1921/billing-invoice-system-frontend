@@ -85,12 +85,23 @@ const RegisterUserPage = () => {
 
             } else {
                 toast.success("Successfully Registered");
-                // router.push('/auth/LoginUser');
-            }
-
-        } catch (error: any) {
-            toast.error(error?.message || "An error occurred during registration");
+                router.replace('/auth/LoginUser');
+            }        } catch (error: any) {
             console.error("Error during registration: ", error)
+            
+            // Handle specific error messages from backend
+            let errorMessage = "An error occurred during registration";
+            
+            if (error?.message) {
+                errorMessage = error.message;
+            } else if (error?.response?.data?.error) {
+                errorMessage = error.response.data.error;
+            } else if (error?.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            }
+            
+            // Show specific error message to user
+            toast.error(errorMessage);
             setLoading(false)
         }
     }
@@ -104,16 +115,20 @@ const RegisterUserPage = () => {
                         Create Your Account
                     </h2>
 
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-
-                        {/* Full Name */}
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">                        {/* Full Name */}
                         <div>
                             <label className="flex items-center space-x-3 bg-[#f1f5f9] border border-gray-300 rounded-xl px-5 py-3 focus-within:ring-2 focus-within:ring-[#ea580c]">
                                 <FaUser className="text-[#ea580c]" />
                                 <input
                                     type="text"
-                                    placeholder="Full Name"
-                                    {...register("fullName", { required: "Full Name is required" })}
+                                    placeholder="Full Name *"
+                                    {...register("fullName", { 
+                                        required: "Full Name is required",
+                                        minLength: {
+                                            value: 2,
+                                            message: "Full name must be at least 2 characters long"
+                                        }
+                                    })}
                                     className="bg-transparent flex-1 outline-none text-[#1e293b] placeholder-gray-500"
                                 />
                             </label>
@@ -126,8 +141,14 @@ const RegisterUserPage = () => {
                                 <FaEnvelope className="text-[#ea580c]" />
                                 <input
                                     type="email"
-                                    placeholder="Email"
-                                    {...register("email", { required: "Email is required" })}
+                                    placeholder="Email *"
+                                    {...register("email", { 
+                                        required: "Email is required",
+                                        pattern: {
+                                            value: /^\S+@\S+$/i,
+                                            message: "Please enter a valid email address"
+                                        }
+                                    })}
                                     className="bg-transparent flex-1 outline-none text-[#1e293b] placeholder-gray-500"
                                 />
                             </label>
@@ -140,8 +161,14 @@ const RegisterUserPage = () => {
                                 <FaLock className="text-[#ea580c]" />
                                 <input
                                     type="password"
-                                    placeholder="Password"
-                                    {...register("password", { required: "Password is required" })}
+                                    placeholder="Password *"
+                                    {...register("password", { 
+                                        required: "Password is required",
+                                        minLength: {
+                                            value: 6,
+                                            message: "Password must be at least 6 characters long"
+                                        },
+                                    })}
                                     className="bg-transparent flex-1 outline-none text-[#1e293b] placeholder-gray-500"
                                 />
                             </label>
@@ -154,7 +181,7 @@ const RegisterUserPage = () => {
                                 <FaLock className="text-[#ea580c]" />
                                 <input
                                     type="password"
-                                    placeholder="Confirm Password"
+                                    placeholder="Confirm Password *"
                                     {...register("confirmPassword", {
                                         required: "Confirm Password is required",
                                         validate: (value) => value === password || "Passwords do not match"
@@ -171,8 +198,14 @@ const RegisterUserPage = () => {
                                 <FaPhone className="text-[#ea580c]" />
                                 <input
                                     type="text"
-                                    placeholder="Phone Number"
-                                    {...register("phone", { required: "Phone Number is required" })}
+                                    placeholder="Phone Number *"
+                                    {...register("phone", { 
+                                        required: "Phone Number is required",
+                                        pattern: {
+                                            value: /^[\+|0]?[1-9][\d]{0,15}$/,
+                                            message: "Please enter a valid phone number"
+                                        }
+                                    })}
                                     className="bg-transparent flex-1 outline-none text-[#1e293b] placeholder-gray-500"
                                 />
                             </label>

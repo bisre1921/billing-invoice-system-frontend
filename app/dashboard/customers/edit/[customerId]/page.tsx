@@ -14,6 +14,9 @@ interface EditCustomerFormData {
   email: string;
   phone: string;
   address: string;
+  tin: string;
+  max_credit_amount: number;
+  current_credit_available?: number;
 }
 
 const EditCustomerPage = () => {
@@ -25,32 +28,32 @@ const EditCustomerPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [customerData, setCustomerData] = useState<EditCustomerFormData | null>(null);
 
-  useEffect(() => {
-    console.log("customerId:", customerId); 
-    const localStorageCompany = JSON.parse(localStorage.getItem('company') || '{}');
-    setCompanyId(localStorageCompany.id);
-  }, []);
-
-  useEffect(() => {
-    if (customerId && companyId) {
-      fetchCustomerDetails(customerId as string);
-    }
-  }, [customerId, companyId]);
-
-  const fetchCustomerDetails = async (id: string) => {
+  const fetchCustomerDetails = React.useCallback(async (id: string) => {
     setLoading(true);
     setError(null);
     try {
       const response = await getCustomer(id);
       setCustomerData(response.data);
       reset(response.data); 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error fetching customer details:', error);
       setError('Failed to load customer details.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [reset]);
+
+  useEffect(() => {
+    console.log("customerId:", customerId); 
+    const localStorageCompany = JSON.parse(localStorage.getItem('company') || '{}');
+    setCompanyId(localStorageCompany.id);
+  }, [customerId]);
+
+  useEffect(() => {
+    if (customerId && companyId) {
+      fetchCustomerDetails(customerId as string);
+    }
+  }, [customerId, companyId, fetchCustomerDetails]);
 
   const onSubmit: SubmitHandler<EditCustomerFormData> = async (data) => {
     if (!customerId || !companyId) {
@@ -62,14 +65,43 @@ const EditCustomerPage = () => {
     setError(null);
 
     try {
-      await updateCustomer(customerId as string, { ...data, company_id: companyId });
-      console.log('Customer updated:', data);
+      // Ensure max_credit_amount is a number and properly formatted
+      const maxCreditAmount = Number(data.max_credit_amount);
+      
+      // If max credit amount is being increased, also increase available credit by the difference
+      const currentMaxCredit = customerData?.max_credit_amount || 0;
+      const currentAvailableCredit = customerData?.current_credit_available || 0;
+      
+      // Calculate the difference between new and old max credit
+      const creditDifference = maxCreditAmount - currentMaxCredit;
+      
+      // Only increase available credit if max credit is increasing
+      const newAvailableCredit = creditDifference > 0 
+        ? currentAvailableCredit + creditDifference 
+        : currentAvailableCredit;
+      
+      const formattedData = {
+        ...data,
+        company_id: companyId,
+        max_credit_amount: maxCreditAmount,
+        current_credit_available: newAvailableCredit,
+        tin: data.tin.trim() // Remove any whitespace from TIN
+      };
+
+      await updateCustomer(customerId as string, formattedData);
+      console.log('Customer updated:', formattedData);
       alert('Customer updated successfully!');
-      router.push('/dashboard/customers'); 
-    } catch (error: any) {
+      router.push('/dashboard/customers');    } catch (error: unknown) {
       console.error('Failed to update customer:', error);
-      setError('Failed to update customer.');
-    } finally {
+      let errorMessage = 'Failed to update customer. Please try again.';
+      if (error && typeof error === 'object' && 'response' in error) {
+        const errorObj = error as { response?: { data?: { message?: string } } };
+        if (errorObj.response?.data?.message) {
+          errorMessage = errorObj.response.data.message;
+        }
+      }
+      setError(errorMessage);
+    }finally {
       setLoading(false);
     }
   };
@@ -114,49 +146,100 @@ const EditCustomerPage = () => {
           </h2>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div>
-              <label htmlFor="name" className="block text-sm font-semibold text-gray-700 tracking-wide">
-                Full Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                {...register('name', { required: 'Customer name is required' })}
-                className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 px-3 leading-tight focus:outline-none ${errors.name ? 'border-red-500' : ''}`}
-                placeholder="Enter customer's full name"
-              />
-              {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>}
-            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="name" className="block text-sm font-semibold text-gray-700 tracking-wide">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  {...register('name', { required: 'Customer name is required' })}
+                  className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 px-3 leading-tight focus:outline-none ${errors.name ? 'border-red-500' : ''}`}
+                  placeholder="Enter customer's full name"
+                />
+                {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>}
+              </div>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 tracking-wide">
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
-                {...register('email', {
-                  required: 'Email address is required',
-                  pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                })}
-                className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 px-3 leading-tight focus:outline-none ${errors.email ? 'border-red-500' : ''}`}
-                placeholder="customer@example.com"
-              />
-              {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
-            </div>
+              <div>
+                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 tracking-wide">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  {...register('email', {
+                    required: 'Email address is required',
+                    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  })}
+                  className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 px-3 leading-tight focus:outline-none ${errors.email ? 'border-red-500' : ''}`}
+                  placeholder="customer@example.com"
+                />
+                {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
+              </div>
 
-            <div>
-              <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 tracking-wide">
-                Phone Number
-              </label>
-              <input
-                type="tel"
-                id="phone"
-                {...register('phone', { required: 'Phone number is required' })}
-                className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 px-3 leading-tight focus:outline-none ${errors.phone ? 'border-red-500' : ''}`}
-                placeholder="+1 (555) 123-4567"
-              />
-              {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone.message}</p>}
+              <div>
+                <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 tracking-wide">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  {...register('phone', { required: 'Phone number is required' })}
+                  className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 px-3 leading-tight focus:outline-none ${errors.phone ? 'border-red-500' : ''}`}
+                  placeholder="+251 (911) 123-4567"
+                />
+                {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone.message}</p>}
+              </div>
+
+              <div>
+                <label htmlFor="tin" className="block text-sm font-semibold text-gray-700 tracking-wide">
+                  TIN Number
+                </label>
+                <input
+                  type="text"
+                  id="tin"
+                  {...register('tin', { required: 'TIN number is required' })}
+                  className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 px-3 leading-tight focus:outline-none ${errors.tin ? 'border-red-500' : ''}`}
+                  placeholder="Enter TIN number"
+                />
+                {errors.tin && <p className="mt-1 text-sm text-red-500">{errors.tin.message}</p>}
+              </div>              <div>
+                <label htmlFor="max_credit_amount" className="block text-sm font-semibold text-gray-700 tracking-wide">
+                  Credit Limit (ETB)
+                </label>
+                <div className="flex flex-col">
+                  <input
+                    type="number"
+                    id="max_credit_amount"
+                    step="0.01"
+                    min="0"
+                    {...register('max_credit_amount', { 
+                      required: 'Credit limit is required',
+                      min: { value: 0, message: 'Credit limit must be positive' },
+                      valueAsNumber: true, // Ensures the value is converted to a number
+                      validate: (value) => {
+                        // The backend will validate if the new max credit amount isn't below used credit
+                        if (isNaN(value)) return 'Please enter a valid number';
+                        return true;
+                      }
+                    })}
+                    className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 px-3 leading-tight focus:outline-none ${errors.max_credit_amount ? 'border-red-500' : ''}`}                  />
+                  {customerData?.current_credit_available !== undefined && (
+                    <div className="mt-1 text-sm">
+                      <span className="font-semibold text-gray-700">Available Credit:</span> 
+                      <span className={`ml-1 ${customerData.current_credit_available < customerData.max_credit_amount * 0.2 ? 'text-red-600 font-medium' : 'text-green-600 font-medium'}`}>
+                        {new Intl.NumberFormat('en-ET', { 
+                          style: 'currency', 
+                          currency: 'ETB',
+                          minimumFractionDigits: 2 
+                        }).format(customerData.current_credit_available)}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                {errors.max_credit_amount && <p className="mt-1 text-sm text-red-500">{errors.max_credit_amount.message}</p>}
+              </div>
             </div>
 
             <div>

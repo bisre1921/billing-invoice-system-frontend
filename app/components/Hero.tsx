@@ -1,49 +1,11 @@
 "use client"
 
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
-import { getUser } from '../api/axiosInstance';
-
-interface User {
-  email?: string;
-  user_id?: string;
-}
+import React from 'react'
+import { useAuth } from '../contexts/AuthContext';
 
 const Hero = () => {
-  const [loading, setLoading] = React.useState(false)
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [userName, setUserName] = useState('');
-
-  const checkAuthentication = () => {
-    const storedToken = localStorage.getItem('token');
-    const storedUserInfo = localStorage.getItem('userInfo');
-
-    if (storedToken && storedUserInfo) {
-      try {
-        const parsedUser = JSON.parse(storedUserInfo);
-        setUser(parsedUser);
-        setIsAuthenticated(true);
-        console.log("Parsed user info:", parsedUser);
-      } catch (error) {
-        console.error("Error parsing user info:", error);
-        localStorage.removeItem('token');
-        localStorage.removeItem('userInfo');
-        setUser(null);
-        setIsAuthenticated(false);
-      }
-    } else {
-      setUser(null);
-      setIsAuthenticated(false);
-    }
-
-    setLoading(false);
-  };
-    
-  
-  useEffect(() => {
-    checkAuthentication();
-  }, []);
+  const { isAuthenticated } = useAuth();
   
   return (
     <div className="bg-gradient-to-br from-[#f1f5f9] to-white py-24">
@@ -90,11 +52,8 @@ const Hero = () => {
               </Link>
             </div>
           )}
-
+          </div>
         </div>
-
-        </div>
-        
       </div>
     </div>
   );
